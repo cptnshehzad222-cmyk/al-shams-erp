@@ -1,0 +1,93 @@
+/* GLOBAL RESET */
+
+* {
+
+  box-sizing:border-box;
+
+}
+
+
+html,
+body,
+#root {
+
+  width:100%;
+
+  min-height:100vh;
+
+  margin:0;
+
+  padding:0;
+
+}
+
+
+/* REMOVE VITE DEFAULT SETTINGS */
+
+:root {
+
+  font-family:
+
+  "Segoe UI",
+  Arial,
+  sans-serif;
+
+
+  color:white;
+
+
+  background:#020617;
+
+
+  font-synthesis:none;
+
+  text-rendering:optimizeLegibility;
+
+  -webkit-font-smoothing:antialiased;
+
+  -moz-osx-font-smoothing:grayscale;
+
+}
+
+
+
+/* BODY */
+
+body {
+
+  overflow-x:hidden;
+
+}
+
+
+
+/* REMOVE DEFAULT HEADING STYLES */
+
+h1,
+h2,
+h3,
+p {
+
+  margin:0;
+
+}
+
+
+
+/* REMOVE LINK DEFAULT STYLE */
+
+a {
+
+  text-decoration:none;
+
+}
+
+
+
+/* BUTTON RESET */
+
+button {
+
+  font-family:inherit;
+
+}

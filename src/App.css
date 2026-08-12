@@ -1,0 +1,387 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #020617;
+  color: white;
+}
+
+/* =========================================================
+   ERP MAIN LAYOUT
+========================================================= */
+
+.erp-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: #020617;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  min-height: 100vh;
+  padding: 25px 18px;
+
+  background: linear-gradient(
+    180deg,
+    #111827 0%,
+    #020617 100%
+  );
+
+  box-shadow:
+    10px 0 40px rgba(0, 255, 255, 0.2);
+
+  position: sticky;
+  top: 0;
+
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* =========================================================
+   SIDEBAR TITLE
+========================================================= */
+
+.sidebar-title {
+  color: #00ffff;
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+}
+
+/* =========================================================
+   SIDEBAR LINKS
+========================================================= */
+
+.sidebar a {
+  display: block;
+
+  width: 100%;
+
+  text-decoration: none;
+
+  color: white;
+
+  padding: 14px 16px;
+
+  margin: 10px 0;
+
+  border-radius: 12px;
+
+  background: #1e293b;
+
+  transition: all 0.3s ease;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar a:hover {
+  background: linear-gradient(
+    90deg,
+    #00ffff,
+    #9333ea
+  );
+
+  color: black;
+
+  transform: translateX(8px);
+}
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.erp-content {
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 40px;
+
+  position: relative;
+
+  overflow-x: auto;
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard-page {
+  width: 100%;
+}
+
+/* =========================================================
+   WELCOME TITLE
+========================================================= */
+
+.welcome-title {
+  text-align: center;
+
+  margin-top: 20px;
+
+  margin-bottom: 80px;
+
+  font-size: 48px;
+
+  font-family: "Trebuchet MS", sans-serif;
+
+  background: linear-gradient(
+    90deg,
+    #00ffff,
+    #facc15,
+    #9333ea
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+
+  text-shadow:
+    0 0 25px rgba(0, 255, 255, 0.5);
+
+  animation: glow 3s infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.05);
+  }
+}
+
+/* =========================================================
+   DASHBOARD CARDS
+========================================================= */
+
+.cards {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 25px;
+
+  width: 100%;
+}
+
+.card {
+  padding: 30px;
+
+  border-radius: 25px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(15px);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  transition: all 0.4s ease;
+
+  text-align: center;
+
+  position: relative;
+}
+
+.card:hover {
+  transform:
+    translateY(-12px)
+    scale(1.05);
+}
+
+/* =========================================================
+   CARD COLORS
+========================================================= */
+
+.sales-card {
+  box-shadow:
+    0 0 25px #22c55e;
+}
+
+.purchase-card {
+  box-shadow:
+    0 0 25px #2563eb;
+}
+
+.stock-card {
+  box-shadow:
+    0 0 25px #facc15;
+}
+
+.customer-card {
+  box-shadow:
+    0 0 25px #9333ea;
+}
+
+.card p {
+  font-size: 35px;
+
+  font-weight: bold;
+
+  margin-top: 20px;
+}
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+table {
+  width: 100%;
+
+  margin-top: 30px;
+
+  border-collapse: collapse;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border-radius: 15px;
+
+  overflow: hidden;
+}
+
+th {
+  padding: 15px;
+
+  background: #111827;
+
+  color: #00ffff;
+
+  text-align: center;
+}
+
+td {
+  padding: 15px;
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, 0.1);
+
+  text-align: center;
+}
+
+tr:hover {
+  background: rgba(0, 255, 255, 0.1);
+}
+
+/* =========================================================
+   ITEM FORM
+========================================================= */
+
+.item-form {
+  display: flex;
+
+  gap: 15px;
+
+  flex-wrap: wrap;
+
+  margin: 30px 0;
+}
+
+.item-form input,
+.item-form select {
+  padding: 12px;
+
+  border-radius: 10px;
+
+  border: none;
+
+  background: #1e293b;
+
+  color: white;
+}
+
+.item-form button {
+  padding: 12px 25px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #00ffff;
+
+  color: #020617;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.item-form button:hover {
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .erp-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+
+    min-height: auto;
+
+    position: relative;
+  }
+
+  .erp-content {
+    padding: 20px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-title {
+    font-size: 32px;
+    margin-bottom: 40px;
+  }
+}
