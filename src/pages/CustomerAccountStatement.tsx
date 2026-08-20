@@ -90,29 +90,7 @@ type Branch = {
   branch_name: string;
 };
 
-type StatementRow = {
-  date: string;
-  type: "SALE" | "PAYMENT";
-  reference: string;
-  description: string;
-  debit: number;
-  credit: number;
-  balance: number;
-  branch: string;
-  id: number;
-  vatPercent?: number;
-  quantity?: number;
-  paymentMethod?: string;
-  deliveryNote?: string;
-};
 
-type CustomerBalance = {
-  customer: Customer;
-  totalSales: number;
-  totalPayments: number;
-  balance: number;
-  status: "DUE" | "PAID" | "ADVANCE";
-};
 
 type TabType = "statement" | "balances";
 
@@ -274,11 +252,7 @@ function CustomerAccountStatement() {
       .toLowerCase();
   }
 
-  function getCustomerById(customerId: number) {
-    return customers.find(
-      (customer) => customer.id === customerId
-    );
-  }
+  
 
   function getBranchName(
     branchId: string | null | undefined
@@ -302,16 +276,6 @@ function CustomerAccountStatement() {
         maximumFractionDigits: 2,
       }
     )}`;
-  }
-
-  function formatNumber(value: number) {
-    return Number(value || 0).toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    );
   }
 
   function formatDate(

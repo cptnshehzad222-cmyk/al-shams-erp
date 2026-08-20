@@ -1,93 +1,255 @@
-/* GLOBAL RESET */
+/* =========================================================
+   AL SHAMS ERP - GLOBAL CSS
+   Arabic + English Font Setup
+   ========================================================= */
 
-* {
 
-  box-sizing:border-box;
+/* =========================================================
+   ARABIC FONTS
+   ========================================================= */
 
+@font-face {
+  font-family: "Noto Sans Arabic";
+  src: url("/fonts/NotoSansArabic-VariableFont_wdth,wght.ttf")
+    format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: "Noto Naskh Arabic";
+  src: url("/fonts/NotoNaskhArabic-VariableFont_wght.ttf")
+    format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Amiri";
+  src: url("/fonts/Amiri-Regular.ttf")
+    format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Amiri";
+  src: url("/fonts/Amiri-Bold.ttf")
+    format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HTML / BODY / ROOT
+   ========================================================= */
 
 html,
 body,
 #root {
-
-  width:100%;
-
-  min-height:100vh;
-
-  margin:0;
-
-  padding:0;
-
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 
-/* REMOVE VITE DEFAULT SETTINGS */
+/* =========================================================
+   ROOT
+   ========================================================= */
 
 :root {
+  /*
+    Noto Sans Arabic supports both Arabic and English
+    and is now the default font for the entire ERP.
+  */
 
   font-family:
+    "Noto Sans Arabic",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
-  "Segoe UI",
-  Arial,
-  sans-serif;
+  color: white;
 
+  background: #020617;
 
-  color:white;
+  font-synthesis: none;
 
+  text-rendering: optimizeLegibility;
 
-  background:#020617;
+  -webkit-font-smoothing: antialiased;
 
-
-  font-synthesis:none;
-
-  text-rendering:optimizeLegibility;
-
-  -webkit-font-smoothing:antialiased;
-
-  -moz-osx-font-smoothing:grayscale;
-
+  -moz-osx-font-smoothing: grayscale;
 }
 
 
-
-/* BODY */
+/* =========================================================
+   BODY
+   ========================================================= */
 
 body {
+  overflow-x: hidden;
 
-  overflow-x:hidden;
-
+  font-family:
+    "Noto Sans Arabic",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 }
 
 
+/* =========================================================
+   FORCE GLOBAL FONT
+   ========================================================= */
 
-/* REMOVE DEFAULT HEADING STYLES */
+button,
+input,
+textarea,
+select,
+option,
+table,
+th,
+td {
+  font-family: inherit;
+}
+
+
+/* =========================================================
+   HEADINGS
+   ========================================================= */
 
 h1,
 h2,
 h3,
+h4,
+h5,
+h6,
 p {
+  margin: 0;
 
-  margin:0;
-
+  font-family: inherit;
 }
 
 
-
-/* REMOVE LINK DEFAULT STYLE */
+/* =========================================================
+   LINKS
+   ========================================================= */
 
 a {
+  text-decoration: none;
 
-  text-decoration:none;
-
+  font-family: inherit;
 }
 
 
-
-/* BUTTON RESET */
+/* =========================================================
+   BUTTON RESET
+   ========================================================= */
 
 button {
+  font-family: inherit;
+}
 
-  font-family:inherit;
 
+/* =========================================================
+   INPUTS / FORMS
+   ========================================================= */
+
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+table,
+thead,
+tbody,
+tr,
+th,
+td {
+  font-family: inherit;
+}
+
+
+/* =========================================================
+   ARABIC TEXT HELPER
+   ========================================================= */
+
+/*
+   Whenever you specifically want the beautiful
+   Arabic Naskh style, you can use:
+
+   className="arabic-text"
+*/
+
+.arabic-text {
+  font-family:
+    "Noto Naskh Arabic",
+    "Noto Sans Arabic",
+    Arial,
+    sans-serif;
+}
+
+
+/* =========================================================
+   AMIRI FONT HELPER
+   ========================================================= */
+
+/*
+   Amiri is useful for Arabic company names,
+   official documents and headings.
+
+   Example:
+
+   className="amiri-text"
+*/
+
+.amiri-text {
+  font-family:
+    "Amiri",
+    "Noto Naskh Arabic",
+    "Noto Sans Arabic",
+    Arial,
+    sans-serif;
+}
+
+
+/* =========================================================
+   RTL SUPPORT
+   ========================================================= */
+
+/*
+   You can use:
+
+   dir="rtl"
+
+   on Arabic sections when required.
+*/
+
+[dir="rtl"] {
+  font-family:
+    "Noto Sans Arabic",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 }

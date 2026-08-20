@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
+import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
 
 type Item = {
   id: number;
@@ -182,12 +184,6 @@ function Stock() {
       const quantityOut = Number(
         movement.quantity_out || 0
       );
-
-      /*
-       * Compatibility with your existing movements.
-       * If old records only have quantity,
-       * PURCHASE/OPENING/TRANSFER IN are treated as IN.
-       */
 
       let movementIn = quantityIn;
       let movementOut = quantityOut;
@@ -630,6 +626,294 @@ function Stock() {
       );
     });
 
+  /* ============================================================
+     EXPORT FUNCTIONS
+  ============================================================ */
+
+  // Export Stock Report to PDF
+  function exportStockPDF() {
+    const doc = new jsPDF();
+    const companyName = "AL SHAMS AL GHAYABA TRD EST.";
+    
+    // Header
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text(companyName, 14, 18);
+    
+    doc.setFontSize(12);
+    doc.text("STOCK MANAGEMENT REPORT", 14, 26);
+    
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Generated: ${new Date().toLocaleString("en-GB")}`, 14, 32);
+    doc.line(14, 36, 196, 36);
+    
+    let y = 45;
+    
+    // Summary
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("SUMMARY", 14, y);
+    y += 6;
+    
+    doc.setFont("helvetica", "normal");
+    doc.text(`Total Stock IN: ${totalIn}`, 14, y);
+    y += 5;
+    doc.text(`Total Stock OUT: ${totalOut}`, 14, y);
+    y += 5;
+    doc.text(`Current Stock Balance: ${totalStock}`, 14, y);
+    y += 8;
+    
+    // Table headers
+    const headers = ["Item", "Branch", "Unit", "IN", "OUT", "Balance"];
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 10;
+    const usableWidth = pageWidth - margin * 2;
+    const columnWidth = usableWidth / headers.length;
+    
+    function drawTableHeader() {
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      
+      headers.forEach((header, index) => {
+        doc.rect(
+          margin + index * columnWidth,
+          y,
+          columnWidth,
+          8
+        );
+        doc.text(
+          header,
+          margin + index * columnWidth + 2,
+          y + 5
+        );
+      });
+      y += 8;
+    }
+    
+    drawTableHeader();
+    
+    // Table rows
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    
+    const displayData = filteredStock.length > 0 ? filteredStock : stockData;
+    
+    displayData.forEach((stock) => {
+      if (y > 275) {
+        doc.addPage();
+        y = 15;
+        drawTableHeader();
+      }
+      
+      const rowData = [
+        stock.itemName,
+        stock.branchName,
+        stock.unit || "-",
+        String(stock.quantityIn),
+        String(stock.quantityOut),
+        String(stock.balance),
+      ];
+      
+      rowData.forEach((value, index) => {
+        doc.rect(
+          margin + index * columnWidth,
+          y,
+          columnWidth,
+          8
+        );
+        doc.text(
+          value.substring(0, 20),
+          margin + index * columnWidth + 2,
+          y + 5
+        );
+      });
+      
+      y += 8;
+    });
+    
+    // Footer
+    y += 10;
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    doc.text(`Total Items: ${displayData.length}`, 14, y);
+    
+    doc.save("Stock-Report.pdf");
+  }
+
+  // Export Stock Report to Excel
+  function exportStockExcel() {
+    const displayData = filteredStock.length > 0 ? filteredStock : stockData;
+    
+    const excelData = displayData.map((stock) => ({
+      "Item": stock.itemName,
+      "Branch": stock.branchName,
+      "Unit": stock.unit || "-",
+      "Stock IN": stock.quantityIn,
+      "Stock OUT": stock.quantityOut,
+      "Current Stock": stock.balance,
+    }));
+    
+    // Add summary row
+    excelData.push({
+      "Item": "TOTAL",
+      "Branch": "",
+      "Unit": "",
+      "Stock IN": totalIn,
+      "Stock OUT": totalOut,
+      "Current Stock": totalStock,
+    });
+    
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    
+    // Set column widths
+    worksheet["!cols"] = [
+      { wch: 30 },
+      { wch: 25 },
+      { wch: 10 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 15 },
+    ];
+    
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Stock");
+    
+    XLSX.writeFile(workbook, "Stock-Report.xlsx");
+  }
+
+  // Export Movement Ledger to PDF
+  function exportLedgerPDF() {
+    const doc = new jsPDF();
+    const companyName = "AL SHAMS AL GHAYABA TRD EST.";
+    
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text(companyName, 14, 18);
+    
+    doc.setFontSize(12);
+    doc.text("STOCK MOVEMENT LEDGER", 14, 26);
+    
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Generated: ${new Date().toLocaleString("en-GB")}`, 14, 32);
+    doc.line(14, 36, 196, 36);
+    
+    let y = 45;
+    
+    // Table headers
+    const headers = ["Date", "Item", "Branch", "Type", "IN", "OUT", "Ref"];
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 10;
+    const usableWidth = pageWidth - margin * 2;
+    const columnWidth = usableWidth / headers.length;
+    
+    function drawTableHeader() {
+      doc.setFontSize(6);
+      doc.setFont("helvetica", "bold");
+      
+      headers.forEach((header, index) => {
+        doc.rect(
+          margin + index * columnWidth,
+          y,
+          columnWidth,
+          7
+        );
+        doc.text(
+          header,
+          margin + index * columnWidth + 2,
+          y + 4.5
+        );
+      });
+      y += 7;
+    }
+    
+    doc.setFontSize(6);
+    drawTableHeader();
+    
+    const displayMovements = filteredMovements.length > 0 ? filteredMovements : movements;
+    
+    displayMovements.forEach((movement) => {
+      if (y > 275) {
+        doc.addPage();
+        y = 15;
+        drawTableHeader();
+      }
+      
+      const rowData = [
+        movement.date || "-",
+        getItemName(movement.item_id),
+        getBranchName(movement.branch_id),
+        movement.movement_type || "-",
+        String(movement.quantity_in || 0),
+        String(movement.quantity_out || 0),
+        movement.reference_type || "-",
+      ];
+      
+      rowData.forEach((value, index) => {
+        doc.setFont("helvetica", "normal");
+        doc.rect(
+          margin + index * columnWidth,
+          y,
+          columnWidth,
+          7
+        );
+        doc.text(
+          value.substring(0, 15),
+          margin + index * columnWidth + 2,
+          y + 4.5
+        );
+      });
+      
+      y += 7;
+    });
+    
+    y += 10;
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    doc.text(`Total Movements: ${displayMovements.length}`, 14, y);
+    
+    doc.save("Stock-Ledger.pdf");
+  }
+
+  // Export Movement Ledger to Excel
+  function exportLedgerExcel() {
+    const displayMovements = filteredMovements.length > 0 ? filteredMovements : movements;
+    
+    const excelData = displayMovements.map((movement) => ({
+      "Date": movement.date || "-",
+      "Item": getItemName(movement.item_id),
+      "Branch": getBranchName(movement.branch_id),
+      "Movement Type": movement.movement_type || "-",
+      "Quantity IN": movement.quantity_in || 0,
+      "Quantity OUT": movement.quantity_out || 0,
+      "Reference": movement.reference_type || "-",
+      "Notes": movement.notes || "-",
+    }));
+    
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    
+    worksheet["!cols"] = [
+      { wch: 12 },
+      { wch: 25 },
+      { wch: 20 },
+      { wch: 15 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 30 },
+    ];
+    
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Stock Movements");
+    
+    XLSX.writeFile(workbook, "Stock-Ledger.xlsx");
+  }
+
+  /* ============================================================
+     STYLES
+  ============================================================ */
+
   const inputStyle: React.CSSProperties = {
     width: "100%",
     height: "38px",
@@ -672,6 +956,16 @@ function Stock() {
     opacity: saving ? 0.6 : 1,
   };
 
+  const exportButtonStyle: React.CSSProperties = {
+    border: "none",
+    borderRadius: "6px",
+    padding: "6px 12px",
+    color: "#ffffff",
+    fontWeight: 700,
+    cursor: "pointer",
+    fontSize: "10px",
+  };
+
   return (
     <div
       style={{
@@ -683,13 +977,14 @@ function Stock() {
       }}
     >
       {/* HEADER */}
-
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "15px",
+          flexWrap: "wrap",
+          gap: "10px",
         }}
       >
         <div>
@@ -700,7 +995,7 @@ function Stock() {
               fontSize: "25px",
             }}
           >
-            STOCK MANAGEMENT
+            📊 STOCK MANAGEMENT
           </h1>
 
           <div
@@ -716,20 +1011,70 @@ function Stock() {
 
         <div
           style={{
-            background: "#0b1220",
-            border: "1px solid #263548",
-            borderRadius: "6px",
-            padding: "7px 12px",
-            color: "#94a3b8",
-            fontSize: "11px",
+            display: "flex",
+            gap: "7px",
+            flexWrap: "wrap",
           }}
         >
-          {movements.length} Movements
+          {/* Export Buttons */}
+          <div style={{ display: "flex", gap: "5px", flexWrap: "wrap" }}>
+            <button
+              onClick={exportStockPDF}
+              style={{
+                ...exportButtonStyle,
+                backgroundColor: "#7f1d1d",
+              }}
+            >
+              📄 Stock PDF
+            </button>
+
+            <button
+              onClick={exportStockExcel}
+              style={{
+                ...exportButtonStyle,
+                backgroundColor: "#166534",
+              }}
+            >
+              📊 Stock Excel
+            </button>
+
+            <button
+              onClick={exportLedgerPDF}
+              style={{
+                ...exportButtonStyle,
+                backgroundColor: "#1e3a5f",
+              }}
+            >
+              📄 Ledger PDF
+            </button>
+
+            <button
+              onClick={exportLedgerExcel}
+              style={{
+                ...exportButtonStyle,
+                backgroundColor: "#065f46",
+              }}
+            >
+              📊 Ledger Excel
+            </button>
+          </div>
+
+          <div
+            style={{
+              background: "#0b1220",
+              border: "1px solid #263548",
+              borderRadius: "6px",
+              padding: "7px 12px",
+              color: "#94a3b8",
+              fontSize: "11px",
+            }}
+          >
+            {movements.length} Movements
+          </div>
         </div>
       </div>
 
       {/* SUMMARY */}
-
       <div
         style={{
           display: "grid",
@@ -807,7 +1152,6 @@ function Stock() {
       </div>
 
       {/* OPENING STOCK */}
-
       <div
         style={{
           ...cardStyle,
@@ -982,7 +1326,6 @@ function Stock() {
       </div>
 
       {/* TRANSFER */}
-
       <div
         style={{
           ...cardStyle,
@@ -1143,7 +1486,6 @@ function Stock() {
       </div>
 
       {/* STOCK */}
-
       <div style={cardStyle}>
         <div
           style={{
@@ -1152,6 +1494,7 @@ function Stock() {
             alignItems: "center",
             gap: "10px",
             marginBottom: "10px",
+            flexWrap: "wrap",
           }}
         >
           <h2
@@ -1164,17 +1507,19 @@ function Stock() {
             CURRENT STOCK
           </h2>
 
-          <input
-            placeholder="Search item / branch..."
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            style={{
-              ...inputStyle,
-              width: "230px",
-            }}
-          />
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <input
+              placeholder="Search item / branch..."
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              style={{
+                ...inputStyle,
+                width: "200px",
+              }}
+            />
+          </div>
         </div>
 
         <div
@@ -1380,7 +1725,6 @@ function Stock() {
       </div>
 
       {/* STOCK LEDGER */}
-
       <div
         style={{
           ...cardStyle,

@@ -1238,16 +1238,16 @@ export default function Purchase() {
       );
 
     rows.push({
-      ID: "",
+      ID: 0,
       Date: "",
       Supplier: "",
       Item: "TOTAL",
       Branch: "",
       Driver: "",
       Quantity: totalQuantity,
-      "Unit Price": "",
-      Subtotal: "",
-      "VAT %": "",
+      "Unit Price": 0,
+      Subtotal: 0,
+      "VAT %": 0,
       "VAT Amount": totalVAT,
       "Total Amount":
         totalAmount,

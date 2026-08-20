@@ -107,10 +107,6 @@ function Suppliers() {
   }
 
   async function fetchSuppliers() {
-    /*
-     * IMPORTANT:
-     * No "active" column is selected here.
-     */
     const { data, error } = await supabase
       .from("suppliers")
       .select(
@@ -381,11 +377,6 @@ function Suppliers() {
           0
       );
 
-    /*
-     * When From Date is selected,
-     * previous transactions are
-     * included in opening balance.
-     */
     if (fromDate) {
       supplierTransactions.forEach(
         (transaction) => {
@@ -525,9 +516,6 @@ function Suppliers() {
         transaction.vat_percent || 0
       );
 
-    /*
-     * total_amount is treated as VAT-inclusive.
-     */
     if (
       total > 0 &&
       vatPercent > 0
@@ -578,13 +566,6 @@ function Suppliers() {
     );
   }
 
-  /*
-   * =====================================
-   * ITEM PURCHASE SUMMARY
-   * =====================================
-   *
-   * Grouped by item name.
-   */
   const itemSummary =
     useMemo(() => {
       const map =
@@ -721,12 +702,6 @@ function Suppliers() {
       }
     );
   }
-
-  /*
-   * =====================================
-   * ADD / EDIT SUPPLIER
-   * =====================================
-   */
 
   function openAddSupplier() {
     setEditingSupplier(null);
@@ -964,12 +939,6 @@ function Suppliers() {
     setSearch("");
   }
 
-  /*
-   * =====================================
-   * PDF EXPORT
-   * =====================================
-   */
-
   async function exportPDF() {
     if (!selectedSupplier) {
       alert(
@@ -1005,9 +974,6 @@ function Suppliers() {
       const pageHeight =
         doc.internal.pageSize.getHeight();
 
-      /*
-       * HEADER
-       */
       doc.setFillColor(
         7,
         17,
@@ -1074,9 +1040,6 @@ function Suppliers() {
         }
       );
 
-      /*
-       * SUPPLIER INFORMATION
-       */
       doc.setTextColor(
         15,
         23,
@@ -1158,9 +1121,6 @@ function Suppliers() {
         42
       );
 
-      /*
-       * SUMMARY CARDS
-       */
       const summaryY = 63;
 
       const summaryBoxWidth =
@@ -1271,9 +1231,6 @@ function Suppliers() {
         }
       );
 
-      /*
-       * LEDGER TABLE
-       */
       const rows =
         calculateRunningBalances().map(
           ({
@@ -1535,9 +1492,6 @@ function Suppliers() {
         },
       });
 
-      /*
-       * ITEM SUMMARY
-       */
       const finalY =
         (doc as any)
           .lastAutoTable
@@ -1738,9 +1692,6 @@ function Suppliers() {
         },
       });
 
-      /*
-       * FINAL BALANCE BOX
-       */
       const itemFinalY =
         (doc as any)
           .lastAutoTable
@@ -1856,9 +1807,6 @@ function Suppliers() {
         }
       );
 
-      /*
-       * FOOTERS
-       */
       const totalPages =
         doc.getNumberOfPages();
 
@@ -1948,12 +1896,6 @@ function Suppliers() {
       setExporting(false);
     }
   }
-
-  /*
-   * =====================================
-   * EXCEL EXPORT
-   * =====================================
-   */
 
   function exportExcel() {
     if (!selectedSupplier) {
@@ -2063,9 +2005,6 @@ function Suppliers() {
           })
         );
 
-      /*
-       * ITEM SUMMARY
-       */
       const itemRows =
         itemSummary.map(
           (item) => ({
@@ -2102,9 +2041,6 @@ function Suppliers() {
           itemSummaryTotals.totalAmount,
       });
 
-      /*
-       * SUPPLIER INFORMATION
-       */
       const summaryRows = [
         {
           "SUPPLIER REPORT":
@@ -2191,9 +2127,6 @@ function Suppliers() {
           summaryRows
         );
 
-      /*
-       * TRANSACTIONS
-       */
       XLSX.utils.sheet_add_json(
         worksheet,
         excelRows,
@@ -2202,9 +2135,6 @@ function Suppliers() {
         }
       );
 
-      /*
-       * ITEM SUMMARY
-       */
       const itemStartRow =
         19 +
         excelRows.length;
@@ -2314,11 +2244,585 @@ function Suppliers() {
     }
   }
 
+  // ============================================================
+  // NEON STYLES - MATCHING DASHBOARD
+  // ============================================================
+
+  const pageStyle: CSSProperties = {
+    minHeight: "100%",
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "16px",
+    background: "#000000",
+    color: "#ffffff",
+  };
+
+  const loadingStyle: CSSProperties = {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#000000",
+    color: "#67e8f9",
+    fontSize: "15px",
+    fontWeight: 700,
+    textShadow: "0 0 20px rgba(34,211,238,0.2)",
+  };
+
+  const headerStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+    gap: "12px",
+    flexWrap: "wrap",
+  };
+
+  const titleStyle: CSSProperties = {
+    margin: 0,
+    color: "#22d3ee",
+    fontSize: "28px",
+    fontWeight: 900,
+    letterSpacing: "2px",
+    textShadow: "0 0 30px rgba(34,211,238,0.4), 0 0 60px rgba(34,211,238,0.15)",
+    textTransform: "uppercase",
+  };
+
+  const subtitleStyle: CSSProperties = {
+    margin: "4px 0 0",
+    color: "#67e8f9",
+    fontSize: "13px",
+    textShadow: "0 0 15px rgba(34,211,238,0.15)",
+    opacity: 0.8,
+    letterSpacing: "0.5px",
+  };
+
+  const headerActionsStyle: CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    flexWrap: "wrap",
+  };
+
+  const supplierCountStyle: CSSProperties = {
+    padding: "9px 16px",
+    borderRadius: "8px",
+    background: "rgba(11,18,32,0.6)",
+    border: "1px solid rgba(34,211,238,0.15)",
+    color: "#67e8f9",
+    fontSize: "11px",
+    fontWeight: 800,
+    boxShadow: "0 0 15px rgba(34,211,238,0.05)",
+    backdropFilter: "blur(10px)",
+  };
+
+  const addSupplierButtonStyle: CSSProperties = {
+    border: "none",
+    borderRadius: "8px",
+    padding: "10px 18px",
+    background: "linear-gradient(135deg, rgba(6,182,212,0.2), rgba(37,99,235,0.2))",
+    color: "#67e8f9",
+    fontWeight: 900,
+    fontSize: "11px",
+    cursor: "pointer",
+    border: "1px solid rgba(34,211,238,0.25)",
+    boxShadow: "0 0 20px rgba(34,211,238,0.08), 0 0 40px rgba(34,211,238,0.03)",
+    transition: "all 0.3s ease",
+    backdropFilter: "blur(10px)",
+  };
+
+  const panelStyle: CSSProperties = {
+    background: "linear-gradient(145deg, rgba(15,26,46,0.7), rgba(10,20,37,0.7))",
+    border: "1px solid rgba(34,211,238,0.08)",
+    borderRadius: "12px",
+    padding: "16px",
+    marginBottom: "16px",
+    backdropFilter: "blur(10px)",
+    boxShadow: "0 0 20px rgba(34,211,238,0.03), inset 0 0 30px rgba(34,211,238,0.01)",
+  };
+
+  const sectionTitleStyle: CSSProperties = {
+    margin: 0,
+    color: "#60a5fa",
+    fontSize: "15px",
+    fontWeight: 800,
+    textShadow: "0 0 20px rgba(96,165,250,0.15)",
+  };
+
+  const sectionSubtitleStyle: CSSProperties = {
+    margin: "3px 0 0",
+    color: "#64748b",
+    fontSize: "10px",
+  };
+
+  const managementHeaderStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "12px",
+    marginBottom: "14px",
+    flexWrap: "wrap",
+  };
+
+  const supplierSearchStyle: CSSProperties = {
+    width: "260px",
+    height: "36px",
+    padding: "0 12px",
+    boxSizing: "border-box",
+    background: "rgba(11,18,32,0.8)",
+    color: "#ffffff",
+    border: "1px solid rgba(34,211,238,0.15)",
+    borderRadius: "6px",
+    outline: "none",
+    fontSize: "11px",
+    transition: "all 0.3s ease",
+  };
+
+  const supplierCardsGridStyle: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gap: "12px",
+  };
+
+  const supplierCardStyle: CSSProperties = {
+    background: "linear-gradient(145deg, rgba(11,18,32,0.6), rgba(17,24,39,0.4))",
+    border: "1px solid rgba(34,211,238,0.08)",
+    borderRadius: "10px",
+    padding: "14px",
+    transition: "all 0.3s ease",
+    backdropFilter: "blur(10px)",
+  };
+
+  const supplierCardTopStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: "8px",
+  };
+
+  const supplierNameStyle: CSSProperties = {
+    color: "#ffffff",
+    fontSize: "14px",
+    fontWeight: 900,
+    textShadow: "0 0 10px rgba(34,211,238,0.05)",
+  };
+
+  const supplierMetaStyle: CSSProperties = {
+    marginTop: "3px",
+    color: "#475569",
+    fontSize: "8px",
+  };
+
+  const supplierBalanceBadgeStyle: CSSProperties = {
+    padding: "5px 10px",
+    borderRadius: "5px",
+    background: "rgba(245,158,11,0.1)",
+    color: "#f59e0b",
+    fontSize: "8px",
+    fontWeight: 800,
+    whiteSpace: "nowrap",
+    border: "1px solid rgba(245,158,11,0.1)",
+  };
+
+  const supplierDetailsGridStyle: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gap: "7px",
+    marginTop: "12px",
+    paddingTop: "10px",
+    borderTop: "1px solid rgba(34,211,238,0.06)",
+  };
+
+  const smallLabelStyle: CSSProperties = {
+    display: "block",
+    color: "#475569",
+    fontSize: "7px",
+    fontWeight: 800,
+    marginBottom: "3px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  };
+
+  const supplierCardActionsStyle: CSSProperties = {
+    display: "flex",
+    gap: "5px",
+    marginTop: "12px",
+  };
+
+  const viewSupplierButtonStyle: CSSProperties = {
+    flex: 1,
+    border: "none",
+    borderRadius: "5px",
+    padding: "7px",
+    background: "linear-gradient(135deg, rgba(6,182,212,0.2), rgba(37,99,235,0.2))",
+    color: "#67e8f9",
+    fontSize: "8px",
+    fontWeight: 800,
+    cursor: "pointer",
+    border: "1px solid rgba(34,211,238,0.15)",
+    transition: "all 0.3s ease",
+  };
+
+  const editButtonStyle: CSSProperties = {
+    border: "1px solid rgba(34,211,238,0.1)",
+    borderRadius: "5px",
+    padding: "7px 9px",
+    background: "rgba(30,41,59,0.4)",
+    color: "#cbd5e1",
+    fontSize: "8px",
+    fontWeight: 800,
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  };
+
+  const deleteButtonStyle: CSSProperties = {
+    border: "1px solid rgba(239,68,68,0.2)",
+    borderRadius: "5px",
+    padding: "7px 9px",
+    background: "rgba(239,68,68,0.08)",
+    color: "#f87171",
+    fontSize: "8px",
+    fontWeight: 800,
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  };
+
+  const noSupplierStyle: CSSProperties = {
+    gridColumn: "1 / -1",
+    padding: "30px",
+    textAlign: "center",
+    color: "#64748b",
+  };
+
+  const formGridStyle: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gap: "12px",
+    marginTop: "14px",
+  };
+
+  const inputStyle: CSSProperties = {
+    width: "100%",
+    height: "38px",
+    padding: "0 12px",
+    boxSizing: "border-box",
+    background: "rgba(11,18,32,0.8)",
+    color: "#ffffff",
+    border: "1px solid rgba(34,211,238,0.15)",
+    borderRadius: "6px",
+    outline: "none",
+    fontSize: "12px",
+    transition: "all 0.3s ease",
+  };
+
+  const buttonRowStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "8px",
+    marginTop: "14px",
+    flexWrap: "wrap",
+  };
+
+  const clearButtonStyle: CSSProperties = {
+    border: "1px solid rgba(34,211,238,0.1)",
+    borderRadius: "7px",
+    padding: "9px 16px",
+    background: "rgba(30,41,59,0.4)",
+    color: "#cbd5e1",
+    fontWeight: 700,
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  };
+
+  const pdfButtonStyle: CSSProperties = {
+    border: "none",
+    borderRadius: "7px",
+    padding: "9px 16px",
+    background: "linear-gradient(135deg, rgba(239,68,68,0.2), rgba(185,28,28,0.2))",
+    color: "#fca5a5",
+    fontWeight: 800,
+    cursor: "pointer",
+    border: "1px solid rgba(239,68,68,0.2)",
+    transition: "all 0.3s ease",
+  };
+
+  const excelButtonStyle: CSSProperties = {
+    border: "none",
+    borderRadius: "7px",
+    padding: "9px 16px",
+    background: "linear-gradient(135deg, rgba(34,197,94,0.2), rgba(21,128,61,0.2))",
+    color: "#86efac",
+    fontWeight: 800,
+    cursor: "pointer",
+    border: "1px solid rgba(34,197,94,0.2)",
+    transition: "all 0.3s ease",
+  };
+
+  const supplierInfoStyle: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gap: "10px",
+    background: "rgba(11,18,32,0.6)",
+    border: "1px solid rgba(34,211,238,0.08)",
+    borderRadius: "10px",
+    padding: "14px",
+    marginBottom: "12px",
+    backdropFilter: "blur(10px)",
+  };
+
+  const infoLabelStyle: CSSProperties = {
+    display: "block",
+    color: "#64748b",
+    fontSize: "8px",
+    fontWeight: 800,
+    marginBottom: "4px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  };
+
+  const summaryGridStyle: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gap: "10px",
+    marginBottom: "16px",
+  };
+
+  const ledgerHeaderStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "12px",
+    flexWrap: "wrap",
+    gap: "8px",
+  };
+
+  const transactionCountStyle: CSSProperties = {
+    color: "#67e8f9",
+    fontSize: "11px",
+    fontWeight: 800,
+    padding: "5px 12px",
+    borderRadius: "5px",
+    background: "rgba(34,211,238,0.05)",
+    border: "1px solid rgba(34,211,238,0.08)",
+  };
+
+  const tableContainerStyle: CSSProperties = {
+    overflowX: "auto",
+    border: "1px solid rgba(34,211,238,0.06)",
+    borderRadius: "8px",
+  };
+
+  const tableStyle: CSSProperties = {
+    width: "100%",
+    borderCollapse: "collapse",
+    fontSize: "10px",
+  };
+
+  const thStyle: CSSProperties = {
+    padding: "8px 10px",
+    textAlign: "left",
+    color: "#67e8f9",
+    fontWeight: 700,
+    whiteSpace: "nowrap",
+    borderBottom: "1px solid rgba(34,211,238,0.06)",
+    background: "rgba(11,18,32,0.5)",
+    fontSize: "9px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  };
+
+  const thRightStyle: CSSProperties = {
+    ...thStyle,
+    textAlign: "right",
+  };
+
+  const tdStyle: CSSProperties = {
+    padding: "7px 10px",
+    color: "#cbd5e1",
+    whiteSpace: "nowrap",
+    borderBottom: "1px solid rgba(34,211,238,0.04)",
+    fontSize: "10px",
+  };
+
+  const tdRightStyle: CSSProperties = {
+    ...tdStyle,
+    textAlign: "right",
+  };
+
+  const emptyStyle: CSSProperties = {
+    padding: "30px",
+    textAlign: "center",
+    color: "#64748b",
+  };
+
+  const totalsStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "30px",
+    marginTop: "14px",
+    paddingTop: "12px",
+    borderTop: "1px solid rgba(34,211,238,0.06)",
+    color: "#64748b",
+    fontSize: "9px",
+    fontWeight: 800,
+    flexWrap: "wrap",
+  };
+
+  const emptySupplierStyle: CSSProperties = {
+    minHeight: "300px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "linear-gradient(145deg, rgba(17,24,39,0.5), rgba(11,18,32,0.5))",
+    border: "1px solid rgba(34,211,238,0.06)",
+    borderRadius: "12px",
+    color: "#64748b",
+    textAlign: "center",
+    padding: "20px",
+    backdropFilter: "blur(10px)",
+  };
+
+  const currentBalanceStyle: CSSProperties = {
+    background: "linear-gradient(135deg, rgba(7,17,31,0.8), rgba(11,18,32,0.8))",
+    border: "1px solid rgba(34,211,238,0.08)",
+    borderRadius: "10px",
+    padding: "18px",
+    marginBottom: "16px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: "10px",
+    backdropFilter: "blur(10px)",
+  };
+
+  const currentBalanceLabelStyle: CSSProperties = {
+    color: "#64748b",
+    fontSize: "9px",
+    fontWeight: 800,
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  };
+
+  const currentBalanceDescriptionStyle: CSSProperties = {
+    color: "#cbd5e1",
+    fontSize: "12px",
+    fontWeight: 700,
+    marginTop: "4px",
+  };
+
+  const currentBalanceRightStyle: CSSProperties = {
+    textAlign: "right",
+  };
+
+  const footerStyle: CSSProperties = {
+    marginTop: "12px",
+    textAlign: "right",
+    color: "#475569",
+    fontSize: "9px",
+  };
+
+  const modalOverlayStyle: CSSProperties = {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0, 0, 0, 0.85)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999,
+    padding: "20px",
+    backdropFilter: "blur(10px)",
+  };
+
+  const modalStyle: CSSProperties = {
+    width: "min(620px, 100%)",
+    background: "linear-gradient(145deg, rgba(11,18,32,0.95), rgba(17,24,39,0.95))",
+    border: "1px solid rgba(34,211,238,0.12)",
+    borderRadius: "12px",
+    boxShadow: "0 25px 80px rgba(0,0,0,0.6), 0 0 40px rgba(34,211,238,0.03)",
+    overflow: "hidden",
+    backdropFilter: "blur(20px)",
+  };
+
+  const modalHeaderStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    padding: "18px 20px",
+    borderBottom: "1px solid rgba(34,211,238,0.06)",
+  };
+
+  const modalTitleStyle: CSSProperties = {
+    margin: 0,
+    color: "#22d3ee",
+    fontSize: "17px",
+    fontWeight: 900,
+    textShadow: "0 0 20px rgba(34,211,238,0.15)",
+  };
+
+  const modalSubtitleStyle: CSSProperties = {
+    margin: "4px 0 0",
+    color: "#64748b",
+    fontSize: "10px",
+  };
+
+  const modalCloseButtonStyle: CSSProperties = {
+    border: "1px solid rgba(34,211,238,0.1)",
+    width: "30px",
+    height: "30px",
+    borderRadius: "6px",
+    background: "rgba(30,41,59,0.4)",
+    color: "#cbd5e1",
+    fontSize: "20px",
+    lineHeight: "20px",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  };
+
+  const modalFormGridStyle: CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: "13px",
+    padding: "18px 20px",
+  };
+
+  const modalFooterStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "8px",
+    padding: "15px 20px",
+    borderTop: "1px solid rgba(34,211,238,0.06)",
+    background: "rgba(11,18,32,0.5)",
+  };
+
+  const modalCancelButtonStyle: CSSProperties = {
+    border: "1px solid rgba(34,211,238,0.1)",
+    borderRadius: "7px",
+    padding: "9px 15px",
+    background: "rgba(30,41,59,0.4)",
+    color: "#cbd5e1",
+    fontWeight: 800,
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  };
+
+  const modalSaveButtonStyle: CSSProperties = {
+    border: "none",
+    borderRadius: "7px",
+    padding: "9px 18px",
+    background: "linear-gradient(135deg, rgba(6,182,212,0.2), rgba(37,99,235,0.2))",
+    color: "#67e8f9",
+    fontWeight: 900,
+    cursor: "pointer",
+    border: "1px solid rgba(34,211,238,0.2)",
+    boxShadow: "0 0 20px rgba(34,211,238,0.05)",
+    transition: "all 0.3s ease",
+  };
+
   if (loading) {
     return (
-      <div
-        style={loadingStyle}
-      >
+      <div style={loadingStyle}>
         LOADING SUPPLIERS...
       </div>
     );
@@ -2326,345 +2830,192 @@ function Suppliers() {
 
   return (
     <div style={pageStyle}>
-      {/* =====================================
-          HEADER
-      ===================================== */}
-
-      <div
-        style={headerStyle}
-      >
+      {/* HEADER */}
+      <div style={headerStyle}>
         <div>
-          <h1
-            style={titleStyle}
-          >
-            SUPPLIERS
-          </h1>
-
-          <p
-            style={subtitleStyle}
-          >
-            Supplier management,
-            purchases, payments
-            and complete supplier
-            ledger
-          </p>
+          <h1 style={titleStyle}>✦ SUPPLIERS</h1>
+          <p style={subtitleStyle}>Supplier management, purchases, payments and complete supplier ledger</p>
         </div>
 
-        <div
-          style={headerActionsStyle}
-        >
-          <div
-            style={
-              supplierCountStyle
-            }
-          >
-            TOTAL SUPPLIERS:{" "}
-            {suppliers.length}
+        <div style={headerActionsStyle}>
+          <div style={supplierCountStyle}>
+            TOTAL: {suppliers.length}
           </div>
 
           <button
             type="button"
-            onClick={
-              openAddSupplier
-            }
-            style={
-              addSupplierButtonStyle
-            }
+            onClick={openAddSupplier}
+            style={addSupplierButtonStyle}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = "0 0 40px rgba(34,211,238,0.2), 0 0 80px rgba(34,211,238,0.05)";
+              e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.08), 0 0 40px rgba(34,211,238,0.03)";
+              e.currentTarget.style.borderColor = "rgba(34,211,238,0.25)";
+            }}
           >
             + ADD SUPPLIER
           </button>
         </div>
       </div>
 
-      {/* =====================================
-          SUPPLIER MANAGEMENT
-      ===================================== */}
-
-      <div
-        style={panelStyle}
-      >
-        <div
-          style={
-            managementHeaderStyle
-          }
-        >
+      {/* SUPPLIER DIRECTORY */}
+      <div style={panelStyle}>
+        <div style={managementHeaderStyle}>
           <div>
-            <h2
-              style={
-                sectionTitleStyle
-              }
-            >
-              SUPPLIER DIRECTORY
-            </h2>
-
-            <p
-              style={
-                sectionSubtitleStyle
-              }
-            >
-              Manage your suppliers
-              and supplier account
-              information
-            </p>
+            <h2 style={sectionTitleStyle}>SUPPLIER DIRECTORY</h2>
+            <p style={sectionSubtitleStyle}>Manage your suppliers and supplier account information</p>
           </div>
 
           <input
             type="text"
-            value={
-              supplierSearch
-            }
-            onChange={(e) =>
-              setSupplierSearch(
-                e.target.value
-              )
-            }
-            placeholder="Search supplier..."
-            style={
-              supplierSearchStyle
-            }
+            value={supplierSearch}
+            onChange={(e) => setSupplierSearch(e.target.value)}
+            placeholder="🔍 Search supplier..."
+            style={supplierSearchStyle}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+              e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
           />
         </div>
 
-        <div
-          style={
-            supplierCardsGridStyle
-          }
-        >
-          {visibleSuppliers.length ===
-          0 ? (
-            <div
-              style={
-                noSupplierStyle
-              }
-            >
-              No suppliers found.
-            </div>
+        <div style={supplierCardsGridStyle}>
+          {visibleSuppliers.length === 0 ? (
+            <div style={noSupplierStyle}>No suppliers found.</div>
           ) : (
-            visibleSuppliers.map(
-              (supplier) => (
-                <div
-                  key={
-                    supplier.id
-                  }
-                  style={{
-                    ...supplierCardStyle,
-                    borderColor:
-                      selectedSupplierId ===
-                      supplier.id
-                        ? "#22d3ee"
-                        : "#263548",
-                  }}
-                >
-                  <div
-                    style={
-                      supplierCardTopStyle
-                    }
-                  >
-                    <div>
-                      <div
-                        style={
-                          supplierNameStyle
-                        }
-                      >
-                        {
-                          supplier.supplier_name
-                        }
-                      </div>
-
-                      <div
-                        style={
-                          supplierMetaStyle
-                        }
-                      >
-                        ID #{supplier.id}
-                      </div>
-                    </div>
-
-                    <div
-                      style={
-                        supplierBalanceBadgeStyle
-                      }
-                    >
-                      {formatAmount(
-                        Number(
-                          supplier.opening_balance ||
-                            0
-                        )
-                      )}{" "}
-                      SAR
-                    </div>
+            visibleSuppliers.map((supplier) => (
+              <div
+                key={supplier.id}
+                style={{
+                  ...supplierCardStyle,
+                  borderColor: selectedSupplierId === supplier.id
+                    ? "rgba(34,211,238,0.3)"
+                    : "rgba(34,211,238,0.06)",
+                  boxShadow: selectedSupplierId === supplier.id
+                    ? "0 0 25px rgba(34,211,238,0.05)"
+                    : "none",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = selectedSupplierId === supplier.id
+                    ? "rgba(34,211,238,0.3)"
+                    : "rgba(34,211,238,0.06)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <div style={supplierCardTopStyle}>
+                  <div>
+                    <div style={supplierNameStyle}>{supplier.supplier_name}</div>
+                    <div style={supplierMetaStyle}>ID #{supplier.id}</div>
                   </div>
 
-                  <div
-                    style={
-                      supplierDetailsGridStyle
-                    }
-                  >
-                    <div>
-                      <span
-                        style={
-                          smallLabelStyle
-                        }
-                      >
-                        PHONE
-                      </span>
-
-                      <strong>
-                        {
-                          supplier.phone ||
-                          "-"
-                        }
-                      </strong>
-                    </div>
-
-                    <div>
-                      <span
-                        style={
-                          smallLabelStyle
-                        }
-                      >
-                        VAT
-                      </span>
-
-                      <strong>
-                        {
-                          supplier.vat_number ||
-                          "-"
-                        }
-                      </strong>
-                    </div>
-
-                    <div>
-                      <span
-                        style={
-                          smallLabelStyle
-                        }
-                      >
-                        TERMS
-                      </span>
-
-                      <strong>
-                        {
-                          supplier.credit_terms ||
-                          "-"
-                        }
-                      </strong>
-                    </div>
-                  </div>
-
-                  <div
-                    style={
-                      supplierCardActionsStyle
-                    }
-                  >
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setSelectedSupplierId(
-                          supplier.id
-                        )
-                      }
-                      style={
-                        viewSupplierButtonStyle
-                      }
-                    >
-                      VIEW LEDGER
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        openEditSupplier(
-                          supplier
-                        )
-                      }
-                      style={
-                        editButtonStyle
-                      }
-                    >
-                      EDIT
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        deleteSupplier(
-                          supplier
-                        )
-                      }
-                      style={
-                        deleteButtonStyle
-                      }
-                    >
-                      DELETE
-                    </button>
+                  <div style={supplierBalanceBadgeStyle}>
+                    {formatAmount(Number(supplier.opening_balance || 0))} SAR
                   </div>
                 </div>
-              )
-            )
+
+                <div style={supplierDetailsGridStyle}>
+                  <div>
+                    <span style={smallLabelStyle}>PHONE</span>
+                    <strong>{supplier.phone || "-"}</strong>
+                  </div>
+                  <div>
+                    <span style={smallLabelStyle}>VAT</span>
+                    <strong>{supplier.vat_number || "-"}</strong>
+                  </div>
+                  <div>
+                    <span style={smallLabelStyle}>TERMS</span>
+                    <strong>{supplier.credit_terms || "-"}</strong>
+                  </div>
+                </div>
+
+                <div style={supplierCardActionsStyle}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSupplierId(supplier.id)}
+                    style={viewSupplierButtonStyle}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    VIEW LEDGER
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => openEditSupplier(supplier)}
+                    style={editButtonStyle}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(34,211,238,0.2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(34,211,238,0.1)";
+                    }}
+                  >
+                    EDIT
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => deleteSupplier(supplier)}
+                    style={deleteButtonStyle}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(239,68,68,0.4)";
+                      e.currentTarget.style.background = "rgba(239,68,68,0.12)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(239,68,68,0.2)";
+                      e.currentTarget.style.background = "rgba(239,68,68,0.08)";
+                    }}
+                  >
+                    DELETE
+                  </button>
+                </div>
+              </div>
+            ))
           )}
         </div>
       </div>
 
-      {/* =====================================
-          REPORT FILTERS
-      ===================================== */}
+      {/* REPORT FILTERS */}
+      <div style={panelStyle}>
+        <h2 style={sectionTitleStyle}>SUPPLIER REPORT</h2>
 
-      <div
-        style={panelStyle}
-      >
-        <h2
-          style={
-            sectionTitleStyle
-          }
-        >
-          SUPPLIER REPORT
-        </h2>
-
-        <div
-          style={formGridStyle}
-        >
+        <div style={formGridStyle}>
           <Field label="SELECT SUPPLIER">
             <select
-              value={
-                selectedSupplierId ===
-                ""
-                  ? ""
-                  : String(
-                      selectedSupplierId
-                    )
-              }
+              value={selectedSupplierId === "" ? "" : String(selectedSupplierId)}
               onChange={(e) =>
-                setSelectedSupplierId(
-                  e.target.value
-                    ? Number(
-                        e.target.value
-                      )
-                    : ""
-                )
+                setSelectedSupplierId(e.target.value ? Number(e.target.value) : "")
               }
               style={inputStyle}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
-              <option value="">
-                Select supplier
-              </option>
-
-              {suppliers.map(
-                (supplier) => (
-                  <option
-                    key={
-                      supplier.id
-                    }
-                    value={
-                      supplier.id
-                    }
-                  >
-                    {
-                      supplier.supplier_name
-                    }
-                  </option>
-                )
-              )}
+              <option value="">Select supplier</option>
+              {suppliers.map((supplier) => (
+                <option key={supplier.id} value={supplier.id}>
+                  {supplier.supplier_name}
+                </option>
+              ))}
             </select>
           </Field>
 
@@ -2672,12 +3023,16 @@ function Suppliers() {
             <input
               type="date"
               value={fromDate}
-              onChange={(e) =>
-                setFromDate(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setFromDate(e.target.value)}
               style={inputStyle}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             />
           </Field>
 
@@ -2685,63 +3040,71 @@ function Suppliers() {
             <input
               type="date"
               value={toDate}
-              onChange={(e) =>
-                setToDate(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setToDate(e.target.value)}
               style={inputStyle}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             />
           </Field>
 
           <Field label="SEARCH LEDGER">
             <input
               type="text"
-              placeholder="Item, description, reference..."
+              placeholder="🔍 Item, description, reference..."
               value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setSearch(e.target.value)}
               style={inputStyle}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             />
           </Field>
         </div>
 
-        <div
-          style={buttonRowStyle}
-        >
+        <div style={buttonRowStyle}>
           <button
             type="button"
-            onClick={
-              clearFilters
-            }
-            style={
-              clearButtonStyle
-            }
+            onClick={clearFilters}
+            style={clearButtonStyle}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(34,211,238,0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(34,211,238,0.1)";
+            }}
           >
             CLEAR FILTERS
           </button>
 
           <button
             type="button"
-            onClick={
-              exportExcel
-            }
-            disabled={
-              !selectedSupplier ||
-              filteredTransactions.length ===
-                0
-            }
+            onClick={exportExcel}
+            disabled={!selectedSupplier || filteredTransactions.length === 0}
             style={{
               ...excelButtonStyle,
-              opacity:
-                !selectedSupplier ||
-                filteredTransactions.length ===
-                  0
-                  ? 0.5
-                  : 1,
+              opacity: !selectedSupplier || filteredTransactions.length === 0 ? 0.4 : 1,
+              cursor: !selectedSupplier || filteredTransactions.length === 0 ? "not-allowed" : "pointer",
+            }}
+            onMouseEnter={(e) => {
+              if (selectedSupplier && filteredTransactions.length > 0) {
+                e.currentTarget.style.boxShadow = "0 0 25px rgba(34,197,94,0.15)";
+                e.currentTarget.style.borderColor = "rgba(34,197,94,0.3)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = "none";
+              e.currentTarget.style.borderColor = "rgba(34,197,94,0.2)";
             }}
           >
             📊 EXPORT EXCEL
@@ -2749,798 +3112,249 @@ function Suppliers() {
 
           <button
             type="button"
-            onClick={
-              exportPDF
-            }
-            disabled={
-              exporting ||
-              !selectedSupplier ||
-              filteredTransactions.length ===
-                0
-            }
+            onClick={exportPDF}
+            disabled={exporting || !selectedSupplier || filteredTransactions.length === 0}
             style={{
               ...pdfButtonStyle,
-              opacity:
-                exporting ||
-                !selectedSupplier ||
-                filteredTransactions.length ===
-                  0
-                  ? 0.5
-                  : 1,
+              opacity: exporting || !selectedSupplier || filteredTransactions.length === 0 ? 0.4 : 1,
+              cursor: exporting || !selectedSupplier || filteredTransactions.length === 0 ? "not-allowed" : "pointer",
+            }}
+            onMouseEnter={(e) => {
+              if (selectedSupplier && filteredTransactions.length > 0 && !exporting) {
+                e.currentTarget.style.boxShadow = "0 0 25px rgba(239,68,68,0.15)";
+                e.currentTarget.style.borderColor = "rgba(239,68,68,0.3)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = "none";
+              e.currentTarget.style.borderColor = "rgba(239,68,68,0.2)";
             }}
           >
-            {exporting
-              ? "GENERATING PDF..."
-              : "📄 EXPORT PDF"}
+            {exporting ? "GENERATING PDF..." : "📄 EXPORT PDF"}
           </button>
         </div>
       </div>
 
-      {/* =====================================
-          SELECTED SUPPLIER
-      ===================================== */}
-
+      {/* SELECTED SUPPLIER */}
       {selectedSupplier && (
         <>
-          <div
-            style={
-              supplierInfoStyle
-            }
-          >
+          {/* SUPPLIER INFO */}
+          <div style={supplierInfoStyle}>
             <div>
-              <span
-                style={
-                  infoLabelStyle
-                }
-              >
-                SUPPLIER
-              </span>
-
-              <strong>
-                {
-                  selectedSupplier.supplier_name
-                }
-              </strong>
+              <span style={infoLabelStyle}>SUPPLIER</span>
+              <strong style={{ color: "#ffffff" }}>{selectedSupplier.supplier_name}</strong>
             </div>
-
             <div>
-              <span
-                style={
-                  infoLabelStyle
-                }
-              >
-                PHONE
-              </span>
-
-              <strong>
-                {
-                  selectedSupplier.phone ||
-                  "-"
-                }
-              </strong>
+              <span style={infoLabelStyle}>PHONE</span>
+              <strong style={{ color: "#cbd5e1" }}>{selectedSupplier.phone || "-"}</strong>
             </div>
-
             <div>
-              <span
-                style={
-                  infoLabelStyle
-                }
-              >
-                VAT NUMBER
-              </span>
-
-              <strong>
-                {
-                  selectedSupplier.vat_number ||
-                  "-"
-                }
-              </strong>
+              <span style={infoLabelStyle}>VAT NUMBER</span>
+              <strong style={{ color: "#cbd5e1" }}>{selectedSupplier.vat_number || "-"}</strong>
             </div>
-
             <div>
-              <span
-                style={
-                  infoLabelStyle
-                }
-              >
-                CREDIT / PAYMENT TERMS
-              </span>
-
-              <strong>
-                {
-                  selectedSupplier.credit_terms ||
-                  "-"
-                }
-              </strong>
+              <span style={infoLabelStyle}>CREDIT / PAYMENT TERMS</span>
+              <strong style={{ color: "#cbd5e1" }}>{selectedSupplier.credit_terms || "-"}</strong>
             </div>
           </div>
 
-          {/* =====================================
-              SUMMARY
-          ===================================== */}
-
-          <div
-            style={
-              summaryGridStyle
-            }
-          >
-            <SummaryCard
-              title="OPENING BALANCE"
-              value={
-                report.openingBalance
-              }
-              color="#38bdf8"
-            />
-
-            <SummaryCard
-              title="TOTAL PURCHASES"
-              value={
-                report.purchases
-              }
-              color="#f59e0b"
-            />
-
-            <SummaryCard
-              title="TOTAL PAYMENTS"
-              value={
-                report.payments
-              }
-              color="#22c55e"
-            />
-
-            <SummaryCard
-              title="CURRENT BALANCE"
-              value={
-                report.finalBalance
-              }
-              color={
-                report.finalBalance >
-                0
-                  ? "#f59e0b"
-                  : "#22c55e"
-              }
-            />
+          {/* SUMMARY CARDS */}
+          <div style={summaryGridStyle}>
+            <SummaryCard title="OPENING BALANCE" value={report.openingBalance} color="#38bdf8" />
+            <SummaryCard title="TOTAL PURCHASES" value={report.purchases} color="#f59e0b" />
+            <SummaryCard title="TOTAL PAYMENTS" value={report.payments} color="#22c55e" />
+            <SummaryCard title="CURRENT BALANCE" value={report.finalBalance} color={report.finalBalance > 0 ? "#f59e0b" : "#22c55e"} />
           </div>
 
-          {/* =====================================
-              COMPLETE LEDGER
-          ===================================== */}
-
-          <div
-            style={panelStyle}
-          >
-            <div
-              style={
-                ledgerHeaderStyle
-              }
-            >
+          {/* COMPLETE LEDGER */}
+          <div style={panelStyle}>
+            <div style={ledgerHeaderStyle}>
               <div>
-                <h2
-                  style={
-                    sectionTitleStyle
-                  }
-                >
-                  COMPLETE SUPPLIER LEDGER
-                </h2>
-
-                <p
-                  style={
-                    sectionSubtitleStyle
-                  }
-                >
-                  Purchases, payments,
-                  quantities, VAT,
-                  amounts and running
-                  balance
-                </p>
+                <h2 style={sectionTitleStyle}>COMPLETE SUPPLIER LEDGER</h2>
+                <p style={sectionSubtitleStyle}>Purchases, payments, quantities, VAT, amounts and running balance</p>
               </div>
-
-              <div
-                style={
-                  transactionCountStyle
-                }
-              >
-                {
-                  filteredTransactions.length
-                }{" "}
-                TRANSACTIONS
+              <div style={transactionCountStyle}>
+                {filteredTransactions.length} TRANSACTIONS
               </div>
             </div>
 
-            <div
-              style={
-                tableContainerStyle
-              }
-            >
-              <table
-                style={
-                  tableStyle
-                }
-              >
+            <div style={tableContainerStyle}>
+              <table style={tableStyle}>
                 <thead>
                   <tr>
                     {[
-                      "DATE",
-                      "TYPE",
-                      "REF",
-                      "ITEM",
-                      "QTY",
-                      "UNIT PRICE",
-                      "VAT %",
-                      "VAT AMT",
-                      "TOTAL",
-                      "DEBIT",
-                      "CREDIT",
-                      "METHOD",
-                      "BALANCE",
-                      "DESCRIPTION",
-                      "NOTES",
-                    ].map(
-                      (
-                        heading,
-                        index
-                      ) => (
-                        <th
-                          key={
-                            heading
-                          }
-                          style={
-                            index >=
-                            4
-                              ? thRightStyle
-                              : thStyle
-                          }
-                        >
-                          {
-                            heading
-                          }
-                        </th>
-                      )
-                    )}
+                      "DATE", "TYPE", "REF", "ITEM", "QTY",
+                      "UNIT PRICE", "VAT %", "VAT AMT", "TOTAL",
+                      "DEBIT", "CREDIT", "METHOD", "BALANCE",
+                      "DESCRIPTION", "NOTES"
+                    ].map((heading, index) => (
+                      <th key={heading} style={index >= 4 ? thRightStyle : thStyle}>
+                        {heading}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
 
                 <tbody>
-                  {filteredTransactions.length ===
-                  0 ? (
+                  {filteredTransactions.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan={15}
-                        style={
-                          emptyStyle
-                        }
-                      >
-                        No transactions
-                        found for this
-                        supplier.
+                      <td colSpan={15} style={emptyStyle}>
+                        No transactions found for this supplier.
                       </td>
                     </tr>
                   ) : (
-                    calculateRunningBalances().map(
-                      ({
-                        transaction,
-                        runningBalance,
-                      }) => (
-                        <tr
-                          key={
-                            transaction.id
-                          }
-                        >
-                          <td
-                            style={
-                              tdStyle
-                            }
-                          >
-                            {formatDate(
-                              transaction.transaction_date
-                            )}
-                          </td>
+                    calculateRunningBalances().map(({ transaction, runningBalance }) => (
+                      <tr
+                        key={transaction.id}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(34,211,238,0.03)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "transparent";
+                        }}
+                      >
+                        <td style={tdStyle}>{formatDate(transaction.transaction_date)}</td>
 
-                          <td
-                            style={{
-                              ...tdStyle,
-                              color:
-                                transaction.transaction_type ===
-                                "PURCHASE"
-                                  ? "#f59e0b"
-                                  : "#22c55e",
-                              fontWeight:
-                                800,
-                            }}
-                          >
-                            {getTransactionLabel(
-                              transaction
-                            )}
-                          </td>
+                        <td style={{
+                          ...tdStyle,
+                          color: transaction.transaction_type === "PURCHASE" ? "#f59e0b" : "#22c55e",
+                          fontWeight: 800,
+                        }}>
+                          {getTransactionLabel(transaction)}
+                        </td>
 
-                          <td
-                            style={
-                              tdStyle
-                            }
-                          >
-                            {transaction.reference_id ||
-                              "-"}
-                          </td>
+                        <td style={tdStyle}>{transaction.reference_id || "-"}</td>
 
-                          <td
-                            style={{
-                              ...tdStyle,
-                              color:
-                                "#ffffff",
-                              fontWeight:
-                                700,
-                            }}
-                          >
-                            {getItemName(
-                              transaction.item_id
-                            )}
-                          </td>
+                        <td style={{ ...tdStyle, color: "#ffffff", fontWeight: 700 }}>
+                          {getItemName(transaction.item_id)}
+                        </td>
 
-                          <td
-                            style={
-                              tdRightStyle
-                            }
-                          >
-                            {transaction.quantity
-                              ? Number(
-                                  transaction.quantity
-                                ).toLocaleString()
-                              : "-"}
-                          </td>
+                        <td style={tdRightStyle}>
+                          {transaction.quantity ? Number(transaction.quantity).toLocaleString() : "-"}
+                        </td>
 
-                          <td
-                            style={
-                              tdRightStyle
-                            }
-                          >
-                            {transaction.unit_price
-                              ? formatAmount(
-                                  Number(
-                                    transaction.unit_price
-                                  )
-                                )
-                              : "-"}
-                          </td>
+                        <td style={tdRightStyle}>
+                          {transaction.unit_price ? formatAmount(Number(transaction.unit_price)) : "-"}
+                        </td>
 
-                          <td
-                            style={
-                              tdRightStyle
-                            }
-                          >
-                            {transaction.vat_percent
-                              ? `${transaction.vat_percent}%`
-                              : "-"}
-                          </td>
+                        <td style={tdRightStyle}>
+                          {transaction.vat_percent ? `${transaction.vat_percent}%` : "-"}
+                        </td>
 
-                          <td
-                            style={
-                              tdRightStyle
-                            }
-                          >
-                            {getVatAmount(
-                              transaction
-                            )
-                              ? formatAmount(
-                                  getVatAmount(
-                                    transaction
-                                  )
-                                )
-                              : "-"}
-                          </td>
+                        <td style={tdRightStyle}>
+                          {getVatAmount(transaction) ? formatAmount(getVatAmount(transaction)) : "-"}
+                        </td>
 
-                          <td
-                            style={{
-                              ...tdRightStyle,
-                              color:
-                                "#38bdf8",
-                              fontWeight:
-                                800,
-                            }}
-                          >
-                            {getTransactionTotal(
-                              transaction
-                            )
-                              ? formatAmount(
-                                  getTransactionTotal(
-                                    transaction
-                                  )
-                                )
-                              : "-"}
-                          </td>
+                        <td style={{ ...tdRightStyle, color: "#38bdf8", fontWeight: 800 }}>
+                          {getTransactionTotal(transaction) ? formatAmount(getTransactionTotal(transaction)) : "-"}
+                        </td>
 
-                          <td
-                            style={{
-                              ...tdRightStyle,
-                              color:
-                                "#22c55e",
-                              fontWeight:
-                                800,
-                            }}
-                          >
-                            {transaction.debit
-                              ? formatAmount(
-                                  Number(
-                                    transaction.debit
-                                  )
-                                )
-                              : "-"}
-                          </td>
+                        <td style={{ ...tdRightStyle, color: "#22c55e", fontWeight: 800 }}>
+                          {transaction.debit ? formatAmount(Number(transaction.debit)) : "-"}
+                        </td>
 
-                          <td
-                            style={{
-                              ...tdRightStyle,
-                              color:
-                                "#f59e0b",
-                              fontWeight:
-                                800,
-                            }}
-                          >
-                            {transaction.credit
-                              ? formatAmount(
-                                  Number(
-                                    transaction.credit
-                                  )
-                                )
-                              : "-"}
-                          </td>
+                        <td style={{ ...tdRightStyle, color: "#f59e0b", fontWeight: 800 }}>
+                          {transaction.credit ? formatAmount(Number(transaction.credit)) : "-"}
+                        </td>
 
-                          <td
-                            style={
-                              tdStyle
-                            }
-                          >
-                            {transaction.payment_method ||
-                              "-"}
-                          </td>
+                        <td style={tdStyle}>{transaction.payment_method || "-"}</td>
 
-                          <td
-                            style={{
-                              ...tdRightStyle,
-                              color:
-                                runningBalance >
-                                0
-                                  ? "#f59e0b"
-                                  : "#22c55e",
-                              fontWeight:
-                                900,
-                            }}
-                          >
-                            {formatAmount(
-                              runningBalance
-                            )}
-                          </td>
+                        <td style={{
+                          ...tdRightStyle,
+                          color: runningBalance > 0 ? "#f59e0b" : "#22c55e",
+                          fontWeight: 900,
+                        }}>
+                          {formatAmount(runningBalance)}
+                        </td>
 
-                          <td
-                            style={
-                              tdStyle
-                            }
-                          >
-                            {
-                              transaction.description ||
-                              "-"
-                            }
-                          </td>
+                        <td style={tdStyle}>{transaction.description || "-"}</td>
 
-                          <td
-                            style={
-                              tdStyle
-                            }
-                          >
-                            {
-                              transaction.notes ||
-                              "-"
-                            }
-                          </td>
-                        </tr>
-                      )
-                    )
+                        <td style={tdStyle}>{transaction.notes || "-"}</td>
+                      </tr>
+                    ))
                   )}
                 </tbody>
               </table>
             </div>
 
-            <div
-              style={
-                totalsStyle
-              }
-            >
+            <div style={totalsStyle}>
               <div>
                 TOTAL DEBIT
-
-                <strong
-                  style={{
-                    color:
-                      "#22c55e",
-                  }}
-                >
-                  {formatAmount(
-                    report.debit
-                  )}{" "}
-                  SAR
+                <strong style={{ color: "#22c55e", marginLeft: "6px" }}>
+                  {formatAmount(report.debit)} SAR
                 </strong>
               </div>
-
               <div>
                 TOTAL CREDIT
-
-                <strong
-                  style={{
-                    color:
-                      "#f59e0b",
-                  }}
-                >
-                  {formatAmount(
-                    report.credit
-                  )}{" "}
-                  SAR
+                <strong style={{ color: "#f59e0b", marginLeft: "6px" }}>
+                  {formatAmount(report.credit)} SAR
                 </strong>
               </div>
-
               <div>
                 FINAL BALANCE
-
-                <strong
-                  style={{
-                    color:
-                      report.finalBalance >
-                      0
-                        ? "#f59e0b"
-                        : "#22c55e",
-                  }}
-                >
-                  {formatAmount(
-                    report.finalBalance
-                  )}{" "}
-                  SAR
+                <strong style={{
+                  color: report.finalBalance > 0 ? "#f59e0b" : "#22c55e",
+                  marginLeft: "6px",
+                }}>
+                  {formatAmount(report.finalBalance)} SAR
                 </strong>
               </div>
             </div>
           </div>
 
-          {/* =====================================
-              TOTAL ITEM PURCHASE SUMMARY
-          ===================================== */}
-
-          <div
-            style={panelStyle}
-          >
-            <div
-              style={{
-                marginBottom:
-                  "12px",
-              }}
-            >
-              <h2
-                style={
-                  sectionTitleStyle
-                }
-              >
-                TOTAL ITEM PURCHASE SUMMARY
-              </h2>
-
-              <p
-                style={
-                  sectionSubtitleStyle
-                }
-              >
-                Total purchased
-                quantity and amount
-                grouped by item name
-              </p>
+          {/* ITEM PURCHASE SUMMARY */}
+          <div style={panelStyle}>
+            <div style={{ marginBottom: "12px" }}>
+              <h2 style={sectionTitleStyle}>TOTAL ITEM PURCHASE SUMMARY</h2>
+              <p style={sectionSubtitleStyle}>Total purchased quantity and amount grouped by item name</p>
             </div>
 
-            <div
-              style={
-                tableContainerStyle
-              }
-            >
-              <table
-                style={
-                  tableStyle
-                }
-              >
+            <div style={tableContainerStyle}>
+              <table style={tableStyle}>
                 <thead>
                   <tr>
-                    <th
-                      style={
-                        thStyle
-                      }
-                    >
-                      ITEM NAME
-                    </th>
-
-                    <th
-                      style={
-                        thRightStyle
-                      }
-                    >
-                      TOTAL QTY
-                    </th>
-
-                    <th
-                      style={
-                        thRightStyle
-                      }
-                    >
-                      AMOUNT BEFORE VAT
-                    </th>
-
-                    <th
-                      style={
-                        thRightStyle
-                      }
-                    >
-                      VAT
-                    </th>
-
-                    <th
-                      style={
-                        thRightStyle
-                      }
-                    >
-                      TOTAL AMOUNT
-                    </th>
+                    <th style={thStyle}>ITEM NAME</th>
+                    <th style={thRightStyle}>TOTAL QTY</th>
+                    <th style={thRightStyle}>AMOUNT BEFORE VAT</th>
+                    <th style={thRightStyle}>VAT</th>
+                    <th style={thRightStyle}>TOTAL AMOUNT</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {itemSummary.length ===
-                  0 ? (
+                  {itemSummary.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan={5}
-                        style={
-                          emptyStyle
-                        }
-                      >
-                        No purchase
-                        items found.
-                      </td>
+                      <td colSpan={5} style={emptyStyle}>No purchase items found.</td>
                     </tr>
                   ) : (
                     <>
-                      {itemSummary.map(
-                        (item) => (
-                          <tr
-                            key={
-                              item.itemName
-                            }
-                          >
-                            <td
-                              style={{
-                                ...tdStyle,
-                                color:
-                                  "#ffffff",
-                                fontWeight:
-                                  700,
-                              }}
-                            >
-                              {
-                                item.itemName
-                              }
-                            </td>
+                      {itemSummary.map((item) => (
+                        <tr key={item.itemName}>
+                          <td style={{ ...tdStyle, color: "#ffffff", fontWeight: 700 }}>
+                            {item.itemName}
+                          </td>
+                          <td style={tdRightStyle}>{item.quantity.toLocaleString()}</td>
+                          <td style={tdRightStyle}>{formatAmount(item.amountBeforeVat)} SAR</td>
+                          <td style={tdRightStyle}>{formatAmount(item.vatAmount)} SAR</td>
+                          <td style={{ ...tdRightStyle, color: "#38bdf8", fontWeight: 800 }}>
+                            {formatAmount(item.totalAmount)} SAR
+                          </td>
+                        </tr>
+                      ))}
 
-                            <td
-                              style={
-                                tdRightStyle
-                              }
-                            >
-                              {item.quantity.toLocaleString()}
-                            </td>
-
-                            <td
-                              style={
-                                tdRightStyle
-                              }
-                            >
-                              {formatAmount(
-                                item.amountBeforeVat
-                              )}{" "}
-                              SAR
-                            </td>
-
-                            <td
-                              style={
-                                tdRightStyle
-                              }
-                            >
-                              {formatAmount(
-                                item.vatAmount
-                              )}{" "}
-                              SAR
-                            </td>
-
-                            <td
-                              style={{
-                                ...tdRightStyle,
-                                color:
-                                  "#38bdf8",
-                                fontWeight:
-                                  800,
-                              }}
-                            >
-                              {formatAmount(
-                                item.totalAmount
-                              )}{" "}
-                              SAR
-                            </td>
-                          </tr>
-                        )
-                      )}
-
-                      <tr
-                        style={{
-                          backgroundColor:
-                            "#0b1220",
-                        }}
-                      >
-                        <td
-                          style={{
-                            ...tdStyle,
-                            color:
-                              "#67e8f9",
-                            fontWeight:
-                              900,
-                          }}
-                        >
-                          TOTAL
-                        </td>
-
-                        <td
-                          style={{
-                            ...tdRightStyle,
-                            color:
-                              "#67e8f9",
-                            fontWeight:
-                              900,
-                          }}
-                        >
+                      <tr style={{ background: "rgba(11,18,32,0.5)" }}>
+                        <td style={{ ...tdStyle, color: "#67e8f9", fontWeight: 900 }}>TOTAL</td>
+                        <td style={{ ...tdRightStyle, color: "#67e8f9", fontWeight: 900 }}>
                           {itemSummaryTotals.quantity.toLocaleString()}
                         </td>
-
-                        <td
-                          style={{
-                            ...tdRightStyle,
-                            color:
-                              "#67e8f9",
-                            fontWeight:
-                              900,
-                          }}
-                        >
-                          {formatAmount(
-                            itemSummaryTotals.amountBeforeVat
-                          )}{" "}
-                          SAR
+                        <td style={{ ...tdRightStyle, color: "#67e8f9", fontWeight: 900 }}>
+                          {formatAmount(itemSummaryTotals.amountBeforeVat)} SAR
                         </td>
-
-                        <td
-                          style={{
-                            ...tdRightStyle,
-                            color:
-                              "#67e8f9",
-                            fontWeight:
-                              900,
-                          }}
-                        >
-                          {formatAmount(
-                            itemSummaryTotals.vatAmount
-                          )}{" "}
-                          SAR
+                        <td style={{ ...tdRightStyle, color: "#67e8f9", fontWeight: 900 }}>
+                          {formatAmount(itemSummaryTotals.vatAmount)} SAR
                         </td>
-
-                        <td
-                          style={{
-                            ...tdRightStyle,
-                            color:
-                              "#67e8f9",
-                            fontWeight:
-                              900,
-                          }}
-                        >
-                          {formatAmount(
-                            itemSummaryTotals.totalAmount
-                          )}{" "}
-                          SAR
+                        <td style={{ ...tdRightStyle, color: "#67e8f9", fontWeight: 900 }}>
+                          {formatAmount(itemSummaryTotals.totalAmount)} SAR
                         </td>
                       </tr>
                     </>
@@ -3550,67 +3364,22 @@ function Suppliers() {
             </div>
           </div>
 
-          {/* =====================================
-              CURRENT BALANCE
-          ===================================== */}
-
-          <div
-            style={
-              currentBalanceStyle
-            }
-          >
+          {/* CURRENT BALANCE */}
+          <div style={currentBalanceStyle}>
             <div>
-              <div
-                style={
-                  currentBalanceLabelStyle
-                }
-              >
-                SUPPLIER ACCOUNT
-                SUMMARY
-              </div>
-
-              <div
-                style={
-                  currentBalanceDescriptionStyle
-                }
-              >
-                Opening + Purchases -
-                Payments
-              </div>
+              <div style={currentBalanceLabelStyle}>SUPPLIER ACCOUNT SUMMARY</div>
+              <div style={currentBalanceDescriptionStyle}>Opening + Purchases - Payments</div>
             </div>
-
-            <div
-              style={
-                currentBalanceRightStyle
-              }
-            >
-              <div
-                style={
-                  currentBalanceLabelStyle
-                }
-              >
-                CURRENT BALANCE
-              </div>
-
-              <div
-                style={{
-                  marginTop:
-                    "3px",
-                  color:
-                    report.finalBalance >
-                    0
-                      ? "#f59e0b"
-                      : "#22c55e",
-                  fontSize:
-                    "22px",
-                  fontWeight:
-                    900,
-                }}
-              >
-                {formatAmount(
-                  report.finalBalance
-                )}{" "}
-                SAR
+            <div style={currentBalanceRightStyle}>
+              <div style={currentBalanceLabelStyle}>CURRENT BALANCE</div>
+              <div style={{
+                marginTop: "3px",
+                color: report.finalBalance > 0 ? "#f59e0b" : "#22c55e",
+                fontSize: "22px",
+                fontWeight: 900,
+                textShadow: `0 0 30px ${report.finalBalance > 0 ? "rgba(245,158,11,0.2)" : "rgba(34,197,94,0.2)"}`,
+              }}>
+                {formatAmount(report.finalBalance)} SAR
               </div>
             </div>
           </div>
@@ -3618,180 +3387,115 @@ function Suppliers() {
       )}
 
       {!selectedSupplier && (
-        <div
-          style={
-            emptySupplierStyle
-          }
-        >
-          <div
-            style={{
-              fontSize:
-                "40px",
-              marginBottom:
-                "10px",
-            }}
-          >
-            📊
-          </div>
-
-          <h2
-            style={{
-              margin:
-                "0 0 6px",
-              color:
-                "#cbd5e1",
-            }}
-          >
-            Select a Supplier
-          </h2>
-
-          <p>
-            Select a supplier
-            above to view the
-            complete supplier
-            ledger, purchase
-            summary and account
-            balance.
+        <div style={emptySupplierStyle}>
+          <div style={{ fontSize: "40px", marginBottom: "10px" }}>📊</div>
+          <h2 style={{ margin: "0 0 6px", color: "#cbd5e1", fontSize: "18px" }}>Select a Supplier</h2>
+          <p style={{ color: "#64748b", fontSize: "13px" }}>
+            Select a supplier above to view the complete supplier ledger, purchase summary and account balance.
           </p>
         </div>
       )}
 
-      {/* =====================================
-          FOOTER
-      ===================================== */}
-
-      <div
-        style={
-          footerStyle
-        }
-      >
-        {COMPANY_NAME} • Supplier
-        Management & Ledger
+      <div style={footerStyle}>
+        {COMPANY_NAME} • Supplier Management & Ledger
       </div>
 
-      {/* =====================================
-          ADD / EDIT SUPPLIER MODAL
-      ===================================== */}
-
+      {/* MODAL */}
       {showSupplierModal && (
-        <div
-          style={
-            modalOverlayStyle
-          }
-        >
-          <div
-            style={
-              modalStyle
-            }
-          >
-            <div
-              style={
-                modalHeaderStyle
-              }
-            >
+        <div style={modalOverlayStyle} onClick={closeSupplierModal}>
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+            <div style={modalHeaderStyle}>
               <div>
-                <h2
-                  style={
-                    modalTitleStyle
-                  }
-                >
-                  {editingSupplier
-                    ? "EDIT SUPPLIER"
-                    : "ADD SUPPLIER"}
+                <h2 style={modalTitleStyle}>
+                  {editingSupplier ? "✏️ EDIT SUPPLIER" : "✨ ADD SUPPLIER"}
                 </h2>
-
-                <p
-                  style={
-                    modalSubtitleStyle
-                  }
-                >
-                  Enter supplier account
-                  information
-                </p>
+                <p style={modalSubtitleStyle}>Enter supplier account information</p>
               </div>
-
               <button
                 type="button"
-                onClick={
-                  closeSupplierModal
-                }
-                style={
-                  modalCloseButtonStyle
-                }
+                onClick={closeSupplierModal}
+                style={modalCloseButtonStyle}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(239,68,68,0.3)";
+                  e.currentTarget.style.color = "#f87171";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(34,211,238,0.1)";
+                  e.currentTarget.style.color = "#cbd5e1";
+                }}
               >
                 ×
               </button>
             </div>
 
-            <div
-              style={
-                modalFormGridStyle
-              }
-            >
+            <div style={modalFormGridStyle}>
               <Field label="SUPPLIER NAME *">
                 <input
                   type="text"
-                  value={
-                    supplierForm.supplier_name
-                  }
+                  value={supplierForm.supplier_name}
                   onChange={(e) =>
-                    setSupplierForm(
-                      (previous) => ({
-                        ...previous,
-                        supplier_name:
-                          e.target.value,
-                      })
-                    )
+                    setSupplierForm((previous) => ({
+                      ...previous,
+                      supplier_name: e.target.value,
+                    }))
                   }
                   placeholder="Supplier name"
-                  style={
-                    inputStyle
-                  }
+                  style={inputStyle}
                   autoFocus
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                    e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 />
               </Field>
 
               <Field label="PHONE">
                 <input
                   type="text"
-                  value={
-                    supplierForm.phone
-                  }
+                  value={supplierForm.phone}
                   onChange={(e) =>
-                    setSupplierForm(
-                      (previous) => ({
-                        ...previous,
-                        phone:
-                          e.target.value,
-                      })
-                    )
+                    setSupplierForm((previous) => ({
+                      ...previous,
+                      phone: e.target.value,
+                    }))
                   }
                   placeholder="+966..."
-                  style={
-                    inputStyle
-                  }
+                  style={inputStyle}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                    e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 />
               </Field>
 
               <Field label="VAT NUMBER">
                 <input
                   type="text"
-                  value={
-                    supplierForm.vat_number
-                  }
+                  value={supplierForm.vat_number}
                   onChange={(e) =>
-                    setSupplierForm(
-                      (previous) => ({
-                        ...previous,
-                        vat_number:
-                          e.target.value,
-                      })
-                    )
+                    setSupplierForm((previous) => ({
+                      ...previous,
+                      vat_number: e.target.value,
+                    }))
                   }
                   placeholder="VAT number"
-                  style={
-                    inputStyle
-                  }
+                  style={inputStyle}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                    e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 />
               </Field>
 
@@ -3799,89 +3503,86 @@ function Suppliers() {
                 <input
                   type="number"
                   step="0.01"
-                  value={
-                    supplierForm.opening_balance
-                  }
+                  value={supplierForm.opening_balance}
                   onChange={(e) =>
-                    setSupplierForm(
-                      (previous) => ({
-                        ...previous,
-                        opening_balance:
-                          e.target.value,
-                      })
-                    )
+                    setSupplierForm((previous) => ({
+                      ...previous,
+                      opening_balance: e.target.value,
+                    }))
                   }
                   placeholder="0.00"
-                  style={
-                    inputStyle
-                  }
+                  style={inputStyle}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                    e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 />
               </Field>
 
-              <div
-                style={{
-                  gridColumn:
-                    "1 / -1",
-                }}
-              >
+              <div style={{ gridColumn: "1 / -1" }}>
                 <Field label="CREDIT / PAYMENT TERMS">
                   <input
                     type="text"
-                    value={
-                      supplierForm.credit_terms
-                    }
+                    value={supplierForm.credit_terms}
                     onChange={(e) =>
-                      setSupplierForm(
-                        (previous) => ({
-                          ...previous,
-                          credit_terms:
-                            e.target.value,
-                        })
-                      )
+                      setSupplierForm((previous) => ({
+                        ...previous,
+                        credit_terms: e.target.value,
+                      }))
                     }
                     placeholder="Example: 30 Days, Cash, 60 Days..."
-                    style={
-                      inputStyle
-                    }
+                    style={inputStyle}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(34,211,238,0.4)";
+                      e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(34,211,238,0.15)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
                   />
                 </Field>
               </div>
             </div>
 
-            <div
-              style={
-                modalFooterStyle
-              }
-            >
+            <div style={modalFooterStyle}>
               <button
                 type="button"
-                onClick={
-                  closeSupplierModal
-                }
-                disabled={
-                  savingSupplier
-                }
-                style={
-                  modalCancelButtonStyle
-                }
+                onClick={closeSupplierModal}
+                disabled={savingSupplier}
+                style={modalCancelButtonStyle}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(34,211,238,0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(34,211,238,0.1)";
+                }}
               >
                 CANCEL
               </button>
 
               <button
                 type="button"
-                onClick={
-                  saveSupplier
-                }
-                disabled={
-                  savingSupplier
-                }
+                onClick={saveSupplier}
+                disabled={savingSupplier}
                 style={{
                   ...modalSaveButtonStyle,
-                  opacity:
-                    savingSupplier
-                      ? 0.6
-                      : 1,
+                  opacity: savingSupplier ? 0.6 : 1,
+                  cursor: savingSupplier ? "not-allowed" : "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  if (!savingSupplier) {
+                    e.currentTarget.style.boxShadow = "0 0 30px rgba(34,211,238,0.15)";
+                    e.currentTarget.style.borderColor = "rgba(34,211,238,0.3)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.05)";
+                  e.currentTarget.style.borderColor = "rgba(34,211,238,0.2)";
                 }}
               >
                 {savingSupplier
@@ -3898,948 +3599,39 @@ function Suppliers() {
   );
 }
 
-/* =========================================
-   SMALL COMPONENTS
-========================================= */
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label
-      style={{
-        display:
-          "block",
-        color:
-          "#94a3b8",
-        fontSize:
-          "9px",
-        fontWeight:
-          800,
-      }}
-    >
+    <label style={{ display: "block", color: "#94a3b8", fontSize: "9px", fontWeight: 800 }}>
       {label}
-
-      <div
-        style={{
-          marginTop:
-            "5px",
-        }}
-      >
-        {children}
-      </div>
+      <div style={{ marginTop: "5px" }}>{children}</div>
     </label>
   );
 }
 
-function SummaryCard({
-  title,
-  value,
-  color,
-}: {
-  title: string;
-  value: number;
-  color: string;
-}) {
+function SummaryCard({ title, value, color }: { title: string; value: number; color: string }) {
   return (
-    <div
-      style={{
-        backgroundColor:
-          "#111827",
-        border:
-          "1px solid #263548",
-        borderRadius:
-          "9px",
-        padding:
-          "14px",
-        boxShadow:
-          `0 0 18px ${color}22`,
-      }}
-    >
-      <div
-        style={{
-          color:
-            "#64748b",
-          fontSize:
-            "9px",
-          fontWeight:
-            800,
-        }}
-      >
+    <div style={{
+      background: "linear-gradient(145deg, rgba(17,24,39,0.6), rgba(11,18,32,0.6))",
+      border: "1px solid rgba(34,211,238,0.06)",
+      borderRadius: "10px",
+      padding: "14px",
+      boxShadow: `0 0 20px ${color}10, inset 0 0 20px ${color}03`,
+      backdropFilter: "blur(10px)",
+    }}>
+      <div style={{ color: "#64748b", fontSize: "9px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px" }}>
         {title}
       </div>
-
-      <div
-        style={{
-          marginTop:
-            "6px",
-          color,
-          fontSize:
-            "19px",
-          fontWeight:
-            900,
-        }}
-      >
-        {Number(
-          value || 0
-        ).toLocaleString(
-          "en-SA",
-          {
-            minimumFractionDigits:
-              2,
-            maximumFractionDigits:
-              2,
-          }
-        )}{" "}
-        SAR
+      <div style={{
+        marginTop: "6px",
+        color: color,
+        fontSize: "19px",
+        fontWeight: 900,
+        textShadow: `0 0 20px ${color}20`,
+      }}>
+        {Number(value || 0).toLocaleString("en-SA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} SAR
       </div>
     </div>
   );
 }
-
-/* =========================================
-   STYLES
-========================================= */
-
-const pageStyle: CSSProperties = {
-  minHeight:
-    "100%",
-  width:
-    "100%",
-  boxSizing:
-    "border-box",
-  padding:
-    "16px",
-  background:
-    "linear-gradient(135deg, #07111f, #0f172a, #111827)",
-  color:
-    "#ffffff",
-};
-
-const loadingStyle: CSSProperties = {
-  minHeight:
-    "100vh",
-  display:
-    "flex",
-  alignItems:
-    "center",
-  justifyContent:
-    "center",
-  background:
-    "#020617",
-  color:
-    "#67e8f9",
-  fontSize:
-    "15px",
-  fontWeight:
-    700,
-};
-
-const headerStyle: CSSProperties = {
-  display:
-    "flex",
-  justifyContent:
-    "space-between",
-  alignItems:
-    "center",
-  marginBottom:
-    "16px",
-  gap:
-    "12px",
-};
-
-const headerActionsStyle: CSSProperties = {
-  display:
-    "flex",
-  alignItems:
-    "center",
-  gap:
-    "8px",
-};
-
-const titleStyle: CSSProperties = {
-  margin: 0,
-  color:
-    "#22d3ee",
-  fontSize:
-    "24px",
-  fontWeight:
-    900,
-  letterSpacing:
-    "0.5px",
-};
-
-const subtitleStyle: CSSProperties = {
-  margin:
-    "4px 0 0",
-  color:
-    "#64748b",
-  fontSize:
-    "11px",
-};
-
-const supplierCountStyle: CSSProperties = {
-  padding:
-    "9px 14px",
-  borderRadius:
-    "7px",
-  backgroundColor:
-    "#0b1220",
-  border:
-    "1px solid #263548",
-  color:
-    "#67e8f9",
-  fontSize:
-    "11px",
-  fontWeight:
-    800,
-};
-
-const addSupplierButtonStyle: CSSProperties = {
-  border:
-    "none",
-  borderRadius:
-    "7px",
-  padding:
-    "10px 15px",
-  background:
-    "linear-gradient(135deg, #06b6d4, #2563eb)",
-  color:
-    "#ffffff",
-  fontWeight:
-    900,
-  fontSize:
-    "11px",
-  cursor:
-    "pointer",
-  boxShadow:
-    "0 0 18px rgba(34,211,238,0.18)",
-};
-
-const panelStyle: CSSProperties = {
-  backgroundColor:
-    "#111827",
-  border:
-    "1px solid #263548",
-  borderRadius:
-    "9px",
-  padding:
-    "16px",
-  marginBottom:
-    "16px",
-};
-
-const sectionTitleStyle: CSSProperties = {
-  margin: 0,
-  color:
-    "#60a5fa",
-  fontSize:
-    "15px",
-  fontWeight:
-    800,
-};
-
-const sectionSubtitleStyle: CSSProperties = {
-  margin:
-    "3px 0 0",
-  color:
-    "#64748b",
-  fontSize:
-    "10px",
-};
-
-const managementHeaderStyle: CSSProperties = {
-  display:
-    "flex",
-  justifyContent:
-    "space-between",
-  alignItems:
-    "center",
-  gap:
-    "12px",
-  marginBottom:
-    "14px",
-};
-
-const supplierSearchStyle: CSSProperties = {
-  width:
-    "260px",
-  height:
-    "36px",
-  padding:
-    "0 10px",
-  boxSizing:
-    "border-box",
-  backgroundColor:
-    "#0b1220",
-  color:
-    "#ffffff",
-  border:
-    "1px solid #334155",
-  borderRadius:
-    "6px",
-  outline:
-    "none",
-  fontSize:
-    "11px",
-};
-
-const supplierCardsGridStyle: CSSProperties = {
-  display:
-    "grid",
-  gridTemplateColumns:
-    "repeat(3, minmax(0, 1fr))",
-  gap:
-    "10px",
-};
-
-const supplierCardStyle: CSSProperties = {
-  background:
-    "linear-gradient(145deg, #0b1220, #111827)",
-  border:
-    "1px solid #263548",
-  borderRadius:
-    "9px",
-  padding:
-    "13px",
-  transition:
-    "all 0.2s ease",
-};
-
-const supplierCardTopStyle: CSSProperties = {
-  display:
-    "flex",
-  justifyContent:
-    "space-between",
-  alignItems:
-    "flex-start",
-  gap:
-    "8px",
-};
-
-const supplierNameStyle: CSSProperties = {
-  color:
-    "#ffffff",
-  fontSize:
-    "13px",
-  fontWeight:
-    900,
-};
-
-const supplierMetaStyle: CSSProperties = {
-  marginTop:
-    "3px",
-  color:
-    "#475569",
-  fontSize:
-    "8px",
-};
-
-const supplierBalanceBadgeStyle: CSSProperties = {
-  padding:
-    "5px 7px",
-  borderRadius:
-    "5px",
-  background:
-    "rgba(245,158,11,0.1)",
-  color:
-    "#f59e0b",
-  fontSize:
-    "8px",
-  fontWeight:
-    800,
-  whiteSpace:
-    "nowrap",
-};
-
-const supplierDetailsGridStyle: CSSProperties = {
-  display:
-    "grid",
-  gridTemplateColumns:
-    "repeat(3, minmax(0, 1fr))",
-  gap:
-    "7px",
-  marginTop:
-    "12px",
-  paddingTop:
-    "10px",
-  borderTop:
-    "1px solid #1e293b",
-};
-
-const smallLabelStyle: CSSProperties = {
-  display:
-    "block",
-  color:
-    "#475569",
-  fontSize:
-    "7px",
-  fontWeight:
-    800,
-  marginBottom:
-    "3px",
-};
-
-const supplierCardActionsStyle: CSSProperties = {
-  display:
-    "flex",
-  gap:
-    "5px",
-  marginTop:
-    "12px",
-};
-
-const viewSupplierButtonStyle: CSSProperties = {
-  flex:
-    1,
-  border:
-    "none",
-  borderRadius:
-    "5px",
-  padding:
-    "7px",
-  background:
-    "#0891b2",
-  color:
-    "#ffffff",
-  fontSize:
-    "8px",
-  fontWeight:
-    800,
-  cursor:
-    "pointer",
-};
-
-const editButtonStyle: CSSProperties = {
-  border:
-    "1px solid #334155",
-  borderRadius:
-    "5px",
-  padding:
-    "7px 9px",
-  background:
-    "#1e293b",
-  color:
-    "#cbd5e1",
-  fontSize:
-    "8px",
-  fontWeight:
-    800,
-  cursor:
-    "pointer",
-};
-
-const deleteButtonStyle: CSSProperties = {
-  border:
-    "1px solid rgba(239,68,68,0.35)",
-  borderRadius:
-    "5px",
-  padding:
-    "7px 9px",
-  background:
-    "rgba(239,68,68,0.08)",
-  color:
-    "#f87171",
-  fontSize:
-    "8px",
-  fontWeight:
-    800,
-  cursor:
-    "pointer",
-};
-
-const noSupplierStyle: CSSProperties = {
-  gridColumn:
-    "1 / -1",
-  padding:
-    "25px",
-  textAlign:
-    "center",
-  color:
-    "#64748b",
-};
-
-const formGridStyle: CSSProperties = {
-  display:
-    "grid",
-  gridTemplateColumns:
-    "repeat(4, minmax(0, 1fr))",
-  gap:
-    "12px",
-  marginTop:
-    "14px",
-};
-
-const inputStyle: CSSProperties = {
-  width:
-    "100%",
-  height:
-    "38px",
-  padding:
-    "0 10px",
-  boxSizing:
-    "border-box",
-  backgroundColor:
-    "#0b1220",
-  color:
-    "#ffffff",
-  border:
-    "1px solid #334155",
-  borderRadius:
-    "6px",
-  outline:
-    "none",
-  fontSize:
-    "12px",
-};
-
-const buttonRowStyle: CSSProperties = {
-  display:
-    "flex",
-  justifyContent:
-    "flex-end",
-  gap:
-    "8px",
-  marginTop:
-    "14px",
-};
-
-const clearButtonStyle: CSSProperties = {
-  border:
-    "1px solid #475569",
-  borderRadius:
-    "7px",
-  padding:
-    "9px 16px",
-  background:
-    "#1e293b",
-  color:
-    "#cbd5e1",
-  fontWeight:
-    700,
-  cursor:
-    "pointer",
-};
-
-const pdfButtonStyle: CSSProperties = {
-  border:
-    "none",
-  borderRadius:
-    "7px",
-  padding:
-    "9px 16px",
-  background:
-    "linear-gradient(135deg, #ef4444, #b91c1c)",
-  color:
-    "#ffffff",
-  fontWeight:
-    800,
-  cursor:
-    "pointer",
-};
-
-const excelButtonStyle: CSSProperties = {
-  border:
-    "none",
-  borderRadius:
-    "7px",
-  padding:
-    "9px 16px",
-  background:
-    "linear-gradient(135deg, #22c55e, #15803d)",
-  color:
-    "#ffffff",
-  fontWeight:
-    800,
-  cursor:
-    "pointer",
-};
-
-const supplierInfoStyle: CSSProperties = {
-  display:
-    "grid",
-  gridTemplateColumns:
-    "repeat(4, minmax(0, 1fr))",
-  gap:
-    "10px",
-  backgroundColor:
-    "#0b1220",
-  border:
-    "1px solid #263548",
-  borderRadius:
-    "9px",
-  padding:
-    "14px",
-  marginBottom:
-    "12px",
-};
-
-const infoLabelStyle: CSSProperties = {
-  display:
-    "block",
-  color:
-    "#64748b",
-  fontSize:
-    "8px",
-  fontWeight:
-    800,
-  marginBottom:
-    "4px",
-};
-
-const summaryGridStyle: CSSProperties = {
-  display:
-    "grid",
-  gridTemplateColumns:
-    "repeat(4, minmax(0, 1fr))",
-  gap:
-    "10px",
-  marginBottom:
-    "16px",
-};
-
-const ledgerHeaderStyle: CSSProperties = {
-  display:
-    "flex",
-  justifyContent:
-    "space-between",
-  alignItems:
-    "center",
-  marginBottom:
-    "12px",
-};
-
-const transactionCountStyle: CSSProperties = {
-  color:
-    "#67e8f9",
-  fontSize:
-    "11px",
-  fontWeight:
-    800,
-};
-
-const tableContainerStyle: CSSProperties = {
-  overflowX:
-    "auto",
-  border:
-    "1px solid #263548",
-  borderRadius:
-    "7px",
-};
-
-const tableStyle: CSSProperties = {
-  width:
-    "100%",
-  borderCollapse:
-    "collapse",
-  fontSize:
-    "10px",
-};
-
-const thStyle: CSSProperties = {
-  padding:
-    "8px",
-  textAlign:
-    "left",
-  color:
-    "#67e8f9",
-  fontWeight:
-    700,
-  whiteSpace:
-    "nowrap",
-  borderBottom:
-    "1px solid #263548",
-  backgroundColor:
-    "#0b1220",
-};
-
-const thRightStyle: CSSProperties = {
-  ...thStyle,
-  textAlign:
-    "right",
-};
-
-const tdStyle: CSSProperties = {
-  padding:
-    "8px",
-  color:
-    "#cbd5e1",
-  whiteSpace:
-    "nowrap",
-  borderBottom:
-    "1px solid #1e293b",
-};
-
-const tdRightStyle: CSSProperties = {
-  ...tdStyle,
-  textAlign:
-    "right",
-};
-
-const emptyStyle: CSSProperties = {
-  padding:
-    "30px",
-  textAlign:
-    "center",
-  color:
-    "#64748b",
-};
-
-const totalsStyle: CSSProperties = {
-  display:
-    "flex",
-  justifyContent:
-    "flex-end",
-  gap:
-    "30px",
-  marginTop:
-    "14px",
-  paddingTop:
-    "12px",
-  borderTop:
-    "1px solid #263548",
-  color:
-    "#64748b",
-  fontSize:
-    "9px",
-  fontWeight:
-    800,
-};
-
-const emptySupplierStyle: CSSProperties = {
-  minHeight:
-    "300px",
-  display:
-    "flex",
-  flexDirection:
-    "column",
-  alignItems:
-    "center",
-  justifyContent:
-    "center",
-  backgroundColor:
-    "#111827",
-  border:
-    "1px solid #263548",
-  borderRadius:
-    "9px",
-  color:
-    "#64748b",
-  textAlign:
-    "center",
-  padding:
-    "20px",
-};
-
-const currentBalanceStyle: CSSProperties = {
-  background:
-    "linear-gradient(135deg, #07111f, #0b1220)",
-  border:
-    "1px solid #263548",
-  borderRadius:
-    "9px",
-  padding:
-    "18px",
-  marginBottom:
-    "16px",
-  display:
-    "flex",
-  justifyContent:
-    "space-between",
-  alignItems:
-    "center",
-};
-
-const currentBalanceLabelStyle: CSSProperties = {
-  color:
-    "#64748b",
-  fontSize:
-    "9px",
-  fontWeight:
-    800,
-};
-
-const currentBalanceDescriptionStyle: CSSProperties = {
-  color:
-    "#cbd5e1",
-  fontSize:
-    "12px",
-  fontWeight:
-    700,
-  marginTop:
-    "4px",
-};
-
-const currentBalanceRightStyle: CSSProperties = {
-  textAlign:
-    "right",
-};
-
-const footerStyle: CSSProperties = {
-  marginTop:
-    "12px",
-  textAlign:
-    "right",
-  color:
-    "#475569",
-  fontSize:
-    "9px",
-};
-
-/* =========================================
-   MODAL
-========================================= */
-
-const modalOverlayStyle: CSSProperties = {
-  position:
-    "fixed",
-  inset:
-    0,
-  background:
-    "rgba(2, 6, 23, 0.78)",
-  display:
-    "flex",
-  alignItems:
-    "center",
-  justifyContent:
-    "center",
-  zIndex:
-    9999,
-  padding:
-    "20px",
-};
-
-const modalStyle: CSSProperties = {
-  width:
-    "min(620px, 100%)",
-  background:
-    "linear-gradient(145deg, #0b1220, #111827)",
-  border:
-    "1px solid #334155",
-  borderRadius:
-    "12px",
-  boxShadow:
-    "0 25px 80px rgba(0,0,0,0.55)",
-  overflow:
-    "hidden",
-};
-
-const modalHeaderStyle: CSSProperties = {
-  display:
-    "flex",
-  justifyContent:
-    "space-between",
-  alignItems:
-    "flex-start",
-  padding:
-    "18px",
-  borderBottom:
-    "1px solid #263548",
-};
-
-const modalTitleStyle: CSSProperties = {
-  margin:
-    0,
-  color:
-    "#22d3ee",
-  fontSize:
-    "17px",
-  fontWeight:
-    900,
-};
-
-const modalSubtitleStyle: CSSProperties = {
-  margin:
-    "4px 0 0",
-  color:
-    "#64748b",
-  fontSize:
-    "10px",
-};
-
-const modalCloseButtonStyle: CSSProperties = {
-  border:
-    "1px solid #334155",
-  width:
-    "30px",
-  height:
-    "30px",
-  borderRadius:
-    "6px",
-  background:
-    "#1e293b",
-  color:
-    "#cbd5e1",
-  fontSize:
-    "20px",
-  lineHeight:
-    "20px",
-  cursor:
-    "pointer",
-};
-
-const modalFormGridStyle: CSSProperties = {
-  display:
-    "grid",
-  gridTemplateColumns:
-    "repeat(2, minmax(0, 1fr))",
-  gap:
-    "13px",
-  padding:
-    "18px",
-};
-
-const modalFooterStyle: CSSProperties = {
-  display:
-    "flex",
-  justifyContent:
-    "flex-end",
-  gap:
-    "8px",
-  padding:
-    "15px 18px",
-  borderTop:
-    "1px solid #263548",
-  background:
-    "#0b1220",
-};
-
-const modalCancelButtonStyle: CSSProperties = {
-  border:
-    "1px solid #475569",
-  borderRadius:
-    "7px",
-  padding:
-    "9px 15px",
-  background:
-    "#1e293b",
-  color:
-    "#cbd5e1",
-  fontWeight:
-    800,
-  cursor:
-    "pointer",
-};
-
-const modalSaveButtonStyle: CSSProperties = {
-  border:
-    "none",
-  borderRadius:
-    "7px",
-  padding:
-    "9px 16px",
-  background:
-    "linear-gradient(135deg, #06b6d4, #2563eb)",
-  color:
-    "#ffffff",
-  fontWeight:
-    900,
-  cursor:
-    "pointer",
-};
 
 export default Suppliers;

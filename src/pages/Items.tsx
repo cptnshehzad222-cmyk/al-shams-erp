@@ -271,10 +271,6 @@ function Items() {
     };
 
     try {
-      // ========================================================
-      // UPDATE
-      // ========================================================
-
       if (editingId !== null) {
         const { error } = await supabase
           .from("items")
@@ -290,13 +286,7 @@ function Items() {
         alert(
           "Item updated successfully."
         );
-      }
-
-      // ========================================================
-      // INSERT
-      // ========================================================
-
-      else {
+      } else {
         const { error } = await supabase
           .from("items")
           .insert(itemData);
@@ -396,10 +386,6 @@ function Items() {
     setSaving(true);
 
     try {
-      // ========================================================
-      // CHECK PURCHASE HISTORY
-      // ========================================================
-
       const {
         data: purchaseRecords,
         error: purchaseError,
@@ -414,10 +400,6 @@ function Items() {
           purchaseError.message
         );
       }
-
-      // ========================================================
-      // CHECK SALES HISTORY
-      // ========================================================
 
       const {
         data: salesRecords,
@@ -434,10 +416,6 @@ function Items() {
         );
       }
 
-      // ========================================================
-      // CHECK STOCK MOVEMENT HISTORY
-      // ========================================================
-
       const {
         data: stockRecords,
         error: stockError,
@@ -453,10 +431,6 @@ function Items() {
         );
       }
 
-      // ========================================================
-      // DO NOT DELETE HISTORICAL ITEMS
-      // ========================================================
-
       if (
         (purchaseRecords &&
           purchaseRecords.length > 0) ||
@@ -471,10 +445,6 @@ function Items() {
 
         return;
       }
-
-      // ========================================================
-      // DELETE NEW UNUSED ITEM
-      // ========================================================
 
       const { error } =
         await supabase
@@ -668,86 +638,143 @@ function Items() {
     }).length;
 
   // ============================================================
-  // STYLES
+  // DASHBOARD MATCHING STYLES
   // ============================================================
 
-  const pageStyle: React.CSSProperties =
-    {
-      width: "100%",
-      minHeight: "100vh",
-      background:
-        "linear-gradient(135deg, #07111f 0%, #0f172a 50%, #111827 100%)",
-      color: "#ffffff",
-      padding: "18px",
-      boxSizing: "border-box",
-    };
+  const pageStyle: React.CSSProperties = {
+    width: "100%",
+    minHeight: "100vh",
+    background: "#000000",
+    color: "#ffffff",
+    padding: "18px",
+    boxSizing: "border-box",
+    position: "relative",
+  };
 
-  const cardStyle:
-    React.CSSProperties = {
-      backgroundColor:
-        "#111827",
-      border:
-        "1px solid #263548",
-      borderRadius: "10px",
-      padding: "17px",
-      boxSizing: "border-box",
-    };
+  const cardStyle: React.CSSProperties = {
+    background: "linear-gradient(145deg, rgba(15,26,46,0.7), rgba(10,20,37,0.7))",
+    border: "1px solid rgba(34,211,238,0.15)",
+    borderRadius: "12px",
+    padding: "17px",
+    boxSizing: "border-box",
+    backdropFilter: "blur(10px)",
+    boxShadow: "0 0 20px rgba(34,211,238,0.05), inset 0 0 30px rgba(34,211,238,0.02)",
+  };
 
-  const inputStyle:
-    React.CSSProperties = {
-      width: "100%",
-      height: "39px",
-      padding: "0 10px",
-      backgroundColor:
-        "#0b1220",
-      color: "#ffffff",
-      border:
-        "1px solid #334155",
-      borderRadius: "6px",
-      boxSizing: "border-box",
-      fontSize: "12px",
-      outline: "none",
-    };
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    height: "39px",
+    padding: "0 10px",
+    background: "rgba(11,18,32,0.8)",
+    color: "#ffffff",
+    border: "1px solid rgba(34,211,238,0.2)",
+    borderRadius: "6px",
+    boxSizing: "border-box",
+    fontSize: "12px",
+    outline: "none",
+    transition: "all 0.3s ease",
+  };
 
-  const labelStyle:
-    React.CSSProperties = {
-      display: "block",
-      marginBottom: "5px",
-      color: "#cbd5e1",
-      fontSize: "11px",
-      fontWeight: 600,
-    };
+  const labelStyle: React.CSSProperties = {
+    display: "block",
+    marginBottom: "5px",
+    color: "#94a3b8",
+    fontSize: "10px",
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  };
 
-  const summaryCardStyle:
-    React.CSSProperties = {
-      flex: "1 1 180px",
-      backgroundColor:
-        "#0b1220",
-      border:
-        "1px solid #263548",
-      borderRadius: "8px",
-      padding: "12px",
-    };
+  const summaryCardStyle: React.CSSProperties = {
+    flex: "1 1 180px",
+    background: "linear-gradient(145deg, rgba(11,18,32,0.6), rgba(5,11,20,0.6))",
+    border: "1px solid rgba(34,211,238,0.1)",
+    borderRadius: "10px",
+    padding: "12px",
+    backdropFilter: "blur(10px)",
+  };
 
-  const thStyle:
-    React.CSSProperties = {
-      padding: "9px 8px",
-      textAlign: "left",
-      color: "#67e8f9",
-      fontWeight: 700,
-      whiteSpace: "nowrap",
-      borderBottom:
-        "1px solid #263548",
-    };
+  const thStyle: React.CSSProperties = {
+    padding: "9px 8px",
+    textAlign: "left",
+    color: "#67e8f9",
+    fontWeight: 700,
+    whiteSpace: "nowrap",
+    borderBottom: "1px solid rgba(34,211,238,0.1)",
+    fontSize: "10px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+  };
 
-  const tdStyle:
-    React.CSSProperties = {
-      padding: "8px",
-      color: "#cbd5e1",
-      whiteSpace: "nowrap",
-      borderBottom:
-        "1px solid #1e293b",
-    };
+  const tdStyle: React.CSSProperties = {
+    padding: "8px",
+    color: "#cbd5e1",
+    whiteSpace: "nowrap",
+    borderBottom: "1px solid rgba(38,53,72,0.3)",
+    fontSize: "11px",
+  };
+
+  const titleStyle: React.CSSProperties = {
+    margin: 0,
+    color: "#22d3ee",
+    fontSize: "28px",
+    letterSpacing: "2px",
+    fontWeight: 800,
+    textShadow: "0 0 30px rgba(34,211,238,0.4), 0 0 60px rgba(34,211,238,0.15), 0 0 100px rgba(34,211,238,0.05)",
+    textTransform: "uppercase",
+  };
+
+  const subtitleStyle: React.CSSProperties = {
+    color: "#67e8f9",
+    fontSize: "13px",
+    margin: "4px 0 0 0",
+    textShadow: "0 0 15px rgba(34,211,238,0.15)",
+    opacity: 0.8,
+    letterSpacing: "0.5px",
+  };
+
+  const refreshBtnStyle: React.CSSProperties = {
+    background: "linear-gradient(135deg, rgba(6,182,212,0.15), rgba(37,99,235,0.15))",
+    color: "#67e8f9",
+    border: "1px solid rgba(34,211,238,0.25)",
+    borderRadius: "8px",
+    padding: "8px 18px",
+    fontWeight: 700,
+    cursor: "pointer",
+    fontSize: "11px",
+    boxShadow: "0 0 20px rgba(34,211,238,0.08), 0 0 40px rgba(34,211,238,0.03)",
+    transition: "all 0.3s ease",
+    backdropFilter: "blur(10px)",
+  };
+
+  const glowButtonStyle = (color: string, glowColor: string) => ({
+    background: `linear-gradient(135deg, ${color}, ${color}dd)`,
+    color: "#ffffff",
+    border: "none",
+    borderRadius: "6px",
+    padding: "9px 24px",
+    fontWeight: 700,
+    fontSize: "12px",
+    cursor: "pointer",
+    boxShadow: `0 0 20px ${glowColor}30, 0 0 40px ${glowColor}10`,
+    transition: "all 0.3s ease",
+    opacity: 1,
+  });
+
+  const headerStyle: React.CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "12px",
+    marginBottom: "20px",
+    flexWrap: "wrap",
+  };
+
+  const iconStyle: React.CSSProperties = {
+    fontSize: "26px",
+    marginBottom: "6px",
+    filter: "drop-shadow(0 0 10px rgba(34,211,238,0.2))",
+  };
 
   // ============================================================
   // UI
@@ -757,170 +784,75 @@ function Items() {
     <div style={pageStyle}>
 
       {/* ======================================================
-          HEADER
+          HEADER - Matching Dashboard
       ====================================================== */}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent:
-            "space-between",
-          alignItems: "center",
-          gap: "12px",
-          marginBottom: "15px",
-          flexWrap: "wrap",
-        }}
-      >
+      <div style={headerStyle}>
         <div>
-          <h1
-            style={{
-              margin: 0,
-              color: "#22d3ee",
-              fontSize: "25px",
-              letterSpacing:
-                "0.8px",
-              fontWeight: 800,
-            }}
-          >
-            ITEMS
-          </h1>
-
-          <div
-            style={{
-              color: "#64748b",
-              fontSize: "11px",
-              marginTop: "3px",
-            }}
-          >
-            Item & Stock Master
-          </div>
+          <h1 style={titleStyle}>✦ ITEMS</h1>
+          <p style={subtitleStyle}>Item & Stock Master • {items.length} items</p>
         </div>
-
-        <div
-          style={{
-            backgroundColor:
-              "#0b1220",
-            border:
-              "1px solid #263548",
-            borderRadius: "7px",
-            padding:
-              "8px 13px",
-            color: "#94a3b8",
-            fontSize: "11px",
+        <button
+          onClick={loadData}
+          disabled={loading}
+          style={refreshBtnStyle}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = "0 0 40px rgba(34,211,238,0.25), 0 0 80px rgba(34,211,238,0.08)";
+            e.currentTarget.style.borderColor = "rgba(34,211,238,0.5)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.08), 0 0 40px rgba(34,211,238,0.03)";
+            e.currentTarget.style.borderColor = "rgba(34,211,238,0.25)";
           }}
         >
-          {items.length} Items
-        </div>
+          {loading ? "Loading..." : "↻ Refresh"}
+        </button>
       </div>
 
       {/* ======================================================
-          SUMMARY
+          SUMMARY - Matching Dashboard Colors
       ====================================================== */}
 
       <div
         style={{
-          display: "flex",
-          gap: "10px",
-          flexWrap: "wrap",
-          marginBottom: "14px",
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "12px",
+          marginBottom: "16px",
         }}
       >
-        <div
-          style={summaryCardStyle}
-        >
-          <div
-            style={{
-              color: "#64748b",
-              fontSize: "9px",
-              fontWeight: 700,
-            }}
-          >
+        <div style={summaryCardStyle}>
+          <div style={{ color: "#64748b", fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>
             TOTAL ITEMS
           </div>
-
-          <div
-            style={{
-              color: "#22d3ee",
-              fontSize: "22px",
-              fontWeight: 800,
-              marginTop: "4px",
-            }}
-          >
+          <div style={{ color: "#22d3ee", fontSize: "22px", fontWeight: 800, marginTop: "4px", textShadow: "0 0 20px rgba(34,211,238,0.2)" }}>
             {totalItems}
           </div>
         </div>
 
-        <div
-          style={summaryCardStyle}
-        >
-          <div
-            style={{
-              color: "#64748b",
-              fontSize: "9px",
-              fontWeight: 700,
-            }}
-          >
+        <div style={summaryCardStyle}>
+          <div style={{ color: "#64748b", fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>
             OPENING STOCK
           </div>
-
-          <div
-            style={{
-              color: "#4ade80",
-              fontSize: "22px",
-              fontWeight: 800,
-              marginTop: "4px",
-            }}
-          >
+          <div style={{ color: "#4ade80", fontSize: "22px", fontWeight: 800, marginTop: "4px", textShadow: "0 0 20px rgba(74,222,128,0.2)" }}>
             {totalOpeningStock.toLocaleString()}
           </div>
         </div>
 
-        <div
-          style={summaryCardStyle}
-        >
-          <div
-            style={{
-              color: "#64748b",
-              fontSize: "9px",
-              fontWeight: 700,
-            }}
-          >
+        <div style={summaryCardStyle}>
+          <div style={{ color: "#64748b", fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>
             PURCHASE ITEMS
           </div>
-
-          <div
-            style={{
-              color: "#60a5fa",
-              fontSize: "22px",
-              fontWeight: 800,
-              marginTop: "4px",
-            }}
-          >
+          <div style={{ color: "#60a5fa", fontSize: "22px", fontWeight: 800, marginTop: "4px", textShadow: "0 0 20px rgba(96,165,250,0.2)" }}>
             {activePurchaseItems}
           </div>
         </div>
 
-        <div
-          style={summaryCardStyle}
-        >
-          <div
-            style={{
-              color: "#64748b",
-              fontSize: "9px",
-              fontWeight: 700,
-            }}
-          >
+        <div style={summaryCardStyle}>
+          <div style={{ color: "#64748b", fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px" }}>
             SALES ITEMS
           </div>
-
-          <div
-            style={{
-              color: "#fbbf24",
-              fontSize: "22px",
-              fontWeight: 800,
-              marginTop: "4px",
-            }}
-          >
+          <div style={{ color: "#fbbf24", fontSize: "22px", fontWeight: 800, marginTop: "4px", textShadow: "0 0 20px rgba(251,191,36,0.2)" }}>
             {activeSalesItems}
           </div>
         </div>
@@ -930,17 +862,11 @@ function Items() {
           ITEM FORM
       ====================================================== */}
 
-      <div
-        style={{
-          ...cardStyle,
-          marginBottom: "14px",
-        }}
-      >
+      <div style={{ ...cardStyle, marginBottom: "16px" }}>
         <div
           style={{
             display: "flex",
-            justifyContent:
-              "space-between",
+            justifyContent: "space-between",
             alignItems: "center",
             gap: "10px",
             marginBottom: "14px",
@@ -952,40 +878,37 @@ function Items() {
                 margin: 0,
                 color: "#60a5fa",
                 fontSize: "16px",
+                textShadow: "0 0 20px rgba(96,165,250,0.15)",
               }}
             >
-              {editingId !== null
-                ? "EDIT ITEM"
-                : "ADD NEW ITEM"}
+              {editingId !== null ? "✏️ EDIT ITEM" : "✨ ADD NEW ITEM"}
             </h2>
-
-            <div
-              style={{
-                color: "#64748b",
-                fontSize: "10px",
-                marginTop: "3px",
-              }}
-            >
-              Manage products and
-              opening stock
+            <div style={{ color: "#64748b", fontSize: "10px", marginTop: "3px" }}>
+              Manage products and opening stock
             </div>
           </div>
 
           {editingId !== null && (
             <button
-              onClick={
-                clearForm
-              }
+              onClick={clearForm}
               style={{
-                backgroundColor:
-                  "#374151",
+                background: "rgba(55,65,81,0.4)",
                 color: "#ffffff",
-                border: "none",
-                borderRadius: "5px",
-                padding:
-                  "7px 12px",
+                border: "1px solid rgba(55,65,81,0.2)",
+                borderRadius: "6px",
+                padding: "7px 14px",
                 cursor: "pointer",
                 fontSize: "11px",
+                fontWeight: 600,
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(55,65,81,0.7)";
+                e.currentTarget.style.borderColor = "rgba(239,68,68,0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(55,65,81,0.4)";
+                e.currentTarget.style.borderColor = "rgba(55,65,81,0.2)";
               }}
             >
               Cancel
@@ -996,355 +919,181 @@ function Items() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(4, minmax(0, 1fr))",
+            gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
             gap: "11px",
           }}
         >
-          {/* ITEM NAME */}
-
           <div>
-            <label
-              style={labelStyle}
-            >
-              Item Name *
-            </label>
-
+            <label style={labelStyle}>Item Name *</label>
             <input
               style={inputStyle}
               placeholder="e.g. Close Top Drum"
-              value={
-                form.item_name
-              }
-              onChange={(e) =>
-                updateForm(
-                  "item_name",
-                  e.target.value
-                )
-              }
+              value={form.item_name}
+              onChange={(e) => updateForm("item_name", e.target.value)}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#22d3ee";
+                e.target.style.boxShadow = "0 0 20px rgba(34,211,238,0.15)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "rgba(34,211,238,0.2)";
+                e.target.style.boxShadow = "none";
+              }}
             />
           </div>
 
-          {/* CATEGORY */}
-
           <div>
-            <label
-              style={labelStyle}
-            >
-              Category *
-            </label>
-
+            <label style={labelStyle}>Category *</label>
             <select
               style={inputStyle}
-              value={
-                form.category
-              }
-              onChange={(e) =>
-                updateForm(
-                  "category",
-                  e.target.value
-                )
-              }
+              value={form.category}
+              onChange={(e) => updateForm("category", e.target.value)}
             >
-              <option value="">
-                Select Category
-              </option>
-
-              <option value="Drums">
-                Drums
-              </option>
-
-              <option value="Plastic">
-                Plastic
-              </option>
-
-              <option value="Scrap">
-                Scrap
-              </option>
-
-              <option value="SATAL">
-                SATAL
-              </option>
-
-              <option value="IBC">
-                IBC
-              </option>
-
-              <option value="Cap Seals">
-                Cap Seals
-              </option>
-
-              <option value="Makena">
-                Makena
-              </option>
-
-              <option value="Paint">
-                Paint
-              </option>
-
-              <option value="Other">
-                Other
-              </option>
+              <option value="">Select Category</option>
+              <option value="Drums">Drums</option>
+              <option value="Plastic">Plastic</option>
+              <option value="Scrap">Scrap</option>
+              <option value="SATAL">SATAL</option>
+              <option value="IBC">IBC</option>
+              <option value="Cap Seals">Cap Seals</option>
+              <option value="Makena">Makena</option>
+              <option value="Paint">Paint</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
-          {/* UNIT */}
-
           <div>
-            <label
-              style={labelStyle}
-            >
-              Unit *
-            </label>
-
+            <label style={labelStyle}>Unit *</label>
             <select
               style={inputStyle}
-              value={
-                form.unit
-              }
-              onChange={(e) =>
-                updateForm(
-                  "unit",
-                  e.target.value
-                )
-              }
+              value={form.unit}
+              onChange={(e) => updateForm("unit", e.target.value)}
             >
-              <option value="PCS">
-                PCS
-              </option>
-
-              <option value="LTR">
-                LTR
-              </option>
-
-              <option value="KG">
-                KG
-              </option>
-
-              <option value="SET">
-                SET
-              </option>
-
-              <option value="BOX">
-                BOX
-              </option>
-
-              <option value="OTHER">
-                OTHER
-              </option>
+              <option value="PCS">PCS</option>
+              <option value="LTR">LTR</option>
+              <option value="KG">KG</option>
+              <option value="SET">SET</option>
+              <option value="BOX">BOX</option>
+              <option value="OTHER">OTHER</option>
             </select>
           </div>
 
-          {/* ITEM TYPE */}
-
           <div>
-            <label
-              style={labelStyle}
-            >
-              Item Type *
-            </label>
-
+            <label style={labelStyle}>Item Type *</label>
             <select
               style={inputStyle}
-              value={
-                form.item_type
-              }
-              onChange={(e) =>
-                updateForm(
-                  "item_type",
-                  e.target.value
-                )
-              }
+              value={form.item_type}
+              onChange={(e) => updateForm("item_type", e.target.value)}
             >
-              <option value="Both">
-                Purchase & Sale
-              </option>
-
-              <option value="Purchase">
-                Purchase Only
-              </option>
-
-              <option value="Sale">
-                Sale Only
-              </option>
+              <option value="Both">Purchase & Sale</option>
+              <option value="Purchase">Purchase Only</option>
+              <option value="Sale">Sale Only</option>
             </select>
           </div>
 
-          {/* OPENING STOCK */}
-
           <div>
-            <label
-              style={labelStyle}
-            >
-              Opening Stock
-            </label>
-
+            <label style={labelStyle}>Opening Stock</label>
             <input
               style={inputStyle}
               type="number"
               min="0"
               step="0.01"
               placeholder="0"
-              value={
-                form.opening_stock
-              }
-              onChange={(e) =>
-                updateForm(
-                  "opening_stock",
-                  e.target.value
-                )
-              }
+              value={form.opening_stock}
+              onChange={(e) => updateForm("opening_stock", e.target.value)}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#4ade80";
+                e.target.style.boxShadow = "0 0 20px rgba(74,222,128,0.15)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "rgba(34,211,238,0.2)";
+                e.target.style.boxShadow = "none";
+              }}
             />
           </div>
 
-          {/* BRANCH */}
-
           <div>
-            <label
-              style={labelStyle}
-            >
-              Branch *
-            </label>
-
+            <label style={labelStyle}>Branch *</label>
             <select
               style={inputStyle}
-              value={
-                form.branch_id
-              }
-              onChange={(e) =>
-                updateForm(
-                  "branch_id",
-                  e.target.value
-                )
-              }
+              value={form.branch_id}
+              onChange={(e) => updateForm("branch_id", e.target.value)}
             >
-              <option value="">
-                Select Branch
-              </option>
-
-              {branches.map(
-                (branch) => (
-                  <option
-                    key={
-                      branch.id
-                    }
-                    value={
-                      branch.id
-                    }
-                  >
-                    {
-                      branch.branch_name
-                    }
-                  </option>
-                )
-              )}
+              <option value="">Select Branch</option>
+              {branches.map((branch) => (
+                <option key={branch.id} value={branch.id}>
+                  {branch.branch_name}
+                </option>
+              ))}
             </select>
           </div>
 
-          {/* SALES PRICE */}
-
           <div>
-            <label
-              style={labelStyle}
-            >
-              Default Sales Price
-            </label>
-
+            <label style={labelStyle}>Default Sales Price</label>
             <input
               style={inputStyle}
               type="number"
               min="0"
               step="0.01"
               placeholder="0.00 SAR"
-              value={
-                form.sales_price
-              }
-              onChange={(e) =>
-                updateForm(
-                  "sales_price",
-                  e.target.value
-                )
-              }
+              value={form.sales_price}
+              onChange={(e) => updateForm("sales_price", e.target.value)}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#fbbf24";
+                e.target.style.boxShadow = "0 0 20px rgba(251,191,36,0.15)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "rgba(34,211,238,0.2)";
+                e.target.style.boxShadow = "none";
+              }}
             />
           </div>
         </div>
-
-        {/* STOCK LOGIC NOTE */}
 
         <div
           style={{
             marginTop: "12px",
             padding: "10px 12px",
-            backgroundColor:
-              "#0b1220",
-            border:
-              "1px solid #263548",
+            background: "rgba(11,18,32,0.5)",
+            border: "1px solid rgba(34,211,238,0.08)",
             borderRadius: "7px",
             color: "#94a3b8",
             fontSize: "10px",
             lineHeight: 1.6,
           }}
         >
-          <strong
-            style={{
-              color: "#67e8f9",
-            }}
-          >
-            Stock rule:
-          </strong>{" "}
-          Thinner and Oil empty
-          drums will ultimately
-          feed into the{" "}
-          <strong
-            style={{
-              color: "#4ade80",
-            }}
-          >
-            Close Top
-          </strong>{" "}
-          stock category, while
-          Open Top remains a
-          separate stock category.
+          <strong style={{ color: "#67e8f9" }}>Stock rule:</strong>{" "}
+          Thinner and Oil empty drums will ultimately feed into the{" "}
+          <strong style={{ color: "#4ade80" }}>Close Top</strong>{" "}
+          stock category, while Open Top remains a separate stock category.
         </div>
-
-        {/* SAVE BUTTON */}
 
         <div
           style={{
             display: "flex",
-            justifyContent:
-              "flex-end",
+            justifyContent: "flex-end",
             marginTop: "14px",
           }}
         >
           <button
-            onClick={
-              saveItem
-            }
+            onClick={saveItem}
             disabled={saving}
             style={{
-              background:
-                "linear-gradient(135deg, #06b6d4, #2563eb)",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "6px",
-              padding:
-                "9px 24px",
-              fontWeight: 700,
-              fontSize: "12px",
-              cursor: saving
-                ? "not-allowed"
-                : "pointer",
-              opacity: saving
-                ? 0.6
-                : 1,
+              ...glowButtonStyle("#06b6d4", "rgba(6,182,212,"),
+              opacity: saving ? 0.6 : 1,
+              cursor: saving ? "not-allowed" : "pointer",
+            }}
+            onMouseEnter={(e) => {
+              if (!saving) {
+                e.currentTarget.style.boxShadow = "0 0 40px rgba(6,182,212,0.4), 0 0 80px rgba(6,182,212,0.15)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = "0 0 20px rgba(6,182,212,0.3), 0 0 40px rgba(6,182,212,0.1)";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
-            {saving
-              ? "Saving..."
-              : editingId !== null
-              ? "Update Item"
-              : "Add Item"}
+            {saving ? "Saving..." : editingId !== null ? "Update Item" : "Add Item"}
           </button>
         </div>
       </div>
@@ -1357,8 +1106,7 @@ function Items() {
         <div
           style={{
             display: "flex",
-            justifyContent:
-              "space-between",
+            justifyContent: "space-between",
             alignItems: "center",
             gap: "10px",
             marginBottom: "12px",
@@ -1371,20 +1119,13 @@ function Items() {
                 margin: 0,
                 color: "#60a5fa",
                 fontSize: "16px",
+                textShadow: "0 0 20px rgba(96,165,250,0.15)",
               }}
             >
-              ITEM RECORDS
+              📋 ITEM RECORDS
             </h2>
-
-            <div
-              style={{
-                color: "#64748b",
-                fontSize: "10px",
-                marginTop: "3px",
-              }}
-            >
-              Search and manage
-              existing items
+            <div style={{ color: "#64748b", fontSize: "10px", marginTop: "3px" }}>
+              Search and manage existing items
             </div>
           </div>
 
@@ -1393,378 +1134,195 @@ function Items() {
               ...inputStyle,
               width: "240px",
             }}
-            placeholder="Search item, category, branch..."
+            placeholder="🔍 Search item, category, branch..."
             value={search}
-            onChange={(e) =>
-              setSearch(
-                e.target.value
-              )
-            }
+            onChange={(e) => setSearch(e.target.value)}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#22d3ee";
+              e.target.style.boxShadow = "0 0 20px rgba(34,211,238,0.15)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "rgba(34,211,238,0.2)";
+              e.target.style.boxShadow = "none";
+            }}
           />
         </div>
-
-        {/* TABLE */}
 
         <div
           style={{
             width: "100%",
             overflowX: "auto",
-            border:
-              "1px solid #263548",
+            border: "1px solid rgba(34,211,238,0.08)",
             borderRadius: "7px",
           }}
         >
           <table
             style={{
               width: "100%",
-              borderCollapse:
-                "collapse",
+              borderCollapse: "collapse",
               fontSize: "11px",
             }}
           >
             <thead>
-              <tr
-                style={{
-                  backgroundColor:
-                    "#0b1220",
-                }}
-              >
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  #
-                </th>
-
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  Item
-                </th>
-
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  Category
-                </th>
-
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  Unit
-                </th>
-
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  Type
-                </th>
-
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  Opening Stock
-                </th>
-
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  Sales Price
-                </th>
-
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  Branch
-                </th>
-
-                <th
-                  style={
-                    thStyle
-                  }
-                >
-                  Actions
-                </th>
+              <tr style={{ background: "rgba(11,18,32,0.5)" }}>
+                <th style={thStyle}>#</th>
+                <th style={thStyle}>Item</th>
+                <th style={thStyle}>Category</th>
+                <th style={thStyle}>Unit</th>
+                <th style={thStyle}>Type</th>
+                <th style={thStyle}>Opening Stock</th>
+                <th style={thStyle}>Sales Price</th>
+                <th style={thStyle}>Branch</th>
+                <th style={thStyle}>Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {loading ? (
                 <tr>
-                  <td
-                    colSpan={9}
-                    style={{
-                      padding:
-                        "25px",
-                      textAlign:
-                        "center",
-                      color:
-                        "#64748b",
-                    }}
-                  >
+                  <td colSpan={9} style={{ padding: "25px", textAlign: "center", color: "#64748b" }}>
                     Loading items...
                   </td>
                 </tr>
-              ) : filteredItems.length ===
-                0 ? (
+              ) : filteredItems.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={9}
-                    style={{
-                      padding:
-                        "25px",
-                      textAlign:
-                        "center",
-                      color:
-                        "#64748b",
-                    }}
-                  >
+                  <td colSpan={9} style={{ padding: "25px", textAlign: "center", color: "#64748b" }}>
                     No items found.
                   </td>
                 </tr>
               ) : (
-                filteredItems.map(
-                  (item, index) => (
-                    <tr
-                      key={
-                        item.id
-                      }
-                    >
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
-                        {index + 1}
-                      </td>
-
-                      <td
+                filteredItems.map((item, index) => (
+                  <tr
+                    key={item.id}
+                    style={{
+                      background: index % 2 === 0 ? "rgba(17,24,39,0.4)" : "rgba(11,18,32,0.4)",
+                      transition: "background 0.3s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(34,211,238,0.06)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = index % 2 === 0 ? "rgba(17,24,39,0.4)" : "rgba(11,18,32,0.4)";
+                    }}
+                  >
+                    <td style={tdStyle}>{index + 1}</td>
+                    <td style={{ ...tdStyle, color: "#ffffff", fontWeight: 700 }}>
+                      {item.item_name || "-"}
+                    </td>
+                    <td style={tdStyle}>{item.category || "-"}</td>
+                    <td style={tdStyle}>{item.unit || "-"}</td>
+                    <td style={tdStyle}>
+                      <span
                         style={{
-                          ...tdStyle,
-                          color:
-                            "#ffffff",
-                          fontWeight:
-                            700,
+                          display: "inline-block",
+                          padding: "3px 10px",
+                          borderRadius: "4px",
+                          background: "rgba(23,37,84,0.6)",
+                          color: "#93c5fd",
+                          fontSize: "9px",
+                          fontWeight: 700,
+                          border: "1px solid rgba(96,165,250,0.1)",
                         }}
                       >
-                        {
-                          item.item_name ||
-                          "-"
-                        }
-                      </td>
-
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
-                        {
-                          item.category ||
-                          "-"
-                        }
-                      </td>
-
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
-                        {
-                          item.unit ||
-                          "-"
-                        }
-                      </td>
-
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
-                        <span
+                        {item.item_type || "Both"}
+                      </span>
+                    </td>
+                    <td style={{ ...tdStyle, color: "#22d3ee", fontWeight: 700 }}>
+                      {Number(item.opening_stock || 0).toLocaleString()}
+                    </td>
+                    <td style={tdStyle}>
+                      {Number(item.sales_price || 0).toFixed(2)} SAR
+                    </td>
+                    <td style={tdStyle}>{getBranchName(item.branch_id)}</td>
+                    <td style={tdStyle}>
+                      <div style={{ display: "flex", gap: "5px" }}>
+                        <button
+                          onClick={() => editItem(item)}
                           style={{
-                            display:
-                              "inline-block",
-                            padding:
-                              "3px 7px",
-                            borderRadius:
-                              "4px",
-                            backgroundColor:
-                              "#172554",
-                            color:
-                              "#93c5fd",
-                            fontSize:
-                              "10px",
+                            background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                            color: "#ffffff",
+                            border: "none",
+                            borderRadius: "4px",
+                            padding: "5px 10px",
+                            fontSize: "9px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                            boxShadow: "0 0 10px rgba(37,99,235,0.2)",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.boxShadow = "0 0 20px rgba(37,99,235,0.4)";
+                            e.currentTarget.style.transform = "scale(1.05)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = "0 0 10px rgba(37,99,235,0.2)";
+                            e.currentTarget.style.transform = "scale(1)";
                           }}
                         >
-                          {
-                            item.item_type ||
-                            "Both"
-                          }
-                        </span>
-                      </td>
-
-                      <td
-                        style={{
-                          ...tdStyle,
-                          color:
-                            "#22d3ee",
-                          fontWeight:
-                            700,
-                        }}
-                      >
-                        {Number(
-                          item.opening_stock ||
-                            0
-                        ).toLocaleString()}
-                      </td>
-
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
-                        {Number(
-                          item.sales_price ||
-                            0
-                        ).toFixed(
-                          2
-                        )}{" "}
-                        SAR
-                      </td>
-
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
-                        {getBranchName(
-                          item.branch_id
-                        )}
-                      </td>
-
-                      <td
-                        style={
-                          tdStyle
-                        }
-                      >
-                        <div
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteItem(item.id)}
+                          disabled={saving}
                           style={{
-                            display:
-                              "flex",
-                            gap: "5px",
+                            background: "linear-gradient(135deg, #dc2626, #b91c1c)",
+                            color: "#ffffff",
+                            border: "none",
+                            borderRadius: "4px",
+                            padding: "5px 10px",
+                            fontSize: "9px",
+                            fontWeight: 600,
+                            cursor: saving ? "not-allowed" : "pointer",
+                            transition: "all 0.3s ease",
+                            opacity: saving ? 0.5 : 1,
+                            boxShadow: "0 0 10px rgba(220,38,38,0.2)",
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!saving) {
+                              e.currentTarget.style.boxShadow = "0 0 20px rgba(220,38,38,0.4)";
+                              e.currentTarget.style.transform = "scale(1.05)";
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = "0 0 10px rgba(220,38,38,0.2)";
+                            e.currentTarget.style.transform = "scale(1)";
                           }}
                         >
-                          <button
-                            onClick={() =>
-                              editItem(
-                                item
-                              )
-                            }
-                            style={{
-                              backgroundColor:
-                                "#2563eb",
-                              color:
-                                "#ffffff",
-                              border:
-                                "none",
-                              borderRadius:
-                                "4px",
-                              padding:
-                                "5px 8px",
-                              fontSize:
-                                "10px",
-                              cursor:
-                                "pointer",
-                            }}
-                          >
-                            Edit
-                          </button>
-
-                          <button
-                            onClick={() =>
-                              deleteItem(
-                                item.id
-                              )
-                            }
-                            disabled={
-                              saving
-                            }
-                            style={{
-                              backgroundColor:
-                                "#dc2626",
-                              color:
-                                "#ffffff",
-                              border:
-                                "none",
-                              borderRadius:
-                                "4px",
-                              padding:
-                                "5px 8px",
-                              fontSize:
-                                "10px",
-                              cursor:
-                                saving
-                                  ? "not-allowed"
-                                  : "pointer",
-                              opacity:
-                                saving
-                                  ? 0.6
-                                  : 1,
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                )
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
         </div>
-
-        {/* FOOTER */}
 
         <div
           style={{
             marginTop: "10px",
             color: "#64748b",
             fontSize: "10px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          Showing{" "}
-          <strong
-            style={{
-              color: "#cbd5e1",
-            }}
-          >
-            {filteredItems.length}
-          </strong>{" "}
-          of{" "}
-          <strong
-            style={{
-              color: "#cbd5e1",
-            }}
-          >
-            {items.length}
-          </strong>{" "}
-          items
+          <span>
+            Showing{" "}
+            <strong style={{ color: "#cbd5e1" }}>
+              {filteredItems.length}
+            </strong>{" "}
+            of{" "}
+            <strong style={{ color: "#cbd5e1" }}>
+              {items.length}
+            </strong>{" "}
+            items
+          </span>
+          <span style={{ color: "#64748b", fontSize: "8px", opacity: 0.5 }}>
+            ✦ AL SHAMS ERP
+          </span>
         </div>
       </div>
     </div>
