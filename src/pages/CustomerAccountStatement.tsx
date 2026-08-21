@@ -1166,7 +1166,7 @@ function CustomerAccountStatement() {
     doc: jsPDF
   ) {
     const pageCount =
-      doc.getNumberOfPages();
+      (doc as any).getNumberOfPages?.();
 
     const pageWidth =
       doc.internal.pageSize.getWidth();

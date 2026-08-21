@@ -77,7 +77,16 @@ type ItemSummary = {
 };
 
 const EMPTY_FILTERS = {
-  dateFrom: "", dateTo: "", branch: "", customer: "", supplier: "", item: "", driver: "", paymentStatus: "", search: "",
+  dateFrom: "",
+  dateTo: "",
+  branch: "",
+  customer: "",
+  supplier: "",
+  item: "",
+  driver: "",
+  category: "",
+  paymentStatus: "",
+  search: "",
 };
 type Filters = typeof EMPTY_FILTERS;
 

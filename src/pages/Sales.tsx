@@ -547,7 +547,7 @@ function Sales() {
     doc.text(`Thank you for your business!`, pageWidth - margin, footerY, { align: "right" });
 
     // Page numbers
-    const pageCount = doc.getNumberOfPages();
+    const pageCount = (doc as any).getNumberOfPages?.() ?? 1;
     for (let page = 1; page <= pageCount; page++) {
       doc.setPage(page);
       doc.setFont("helvetica", "normal");
@@ -964,7 +964,7 @@ function Sales() {
     doc.text(`Generated: ${new Date().toLocaleString("en-SA")}`, margin, footerY2);
     doc.text("AL SHAMS ERP - Detailed Sales Report", pageWidth / 2, footerY2, { align: "center" });
 
-    const pageCount2 = doc.getNumberOfPages();
+    const pageCount2 = (doc as any).getNumberOfPages?.() ?? 1;
     for (let page = 1; page <= pageCount2; page++) {
       doc.setPage(page);
       doc.setFont("helvetica", "normal");

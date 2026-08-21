@@ -1050,7 +1050,7 @@ function Expenses() {
       "function"
         ? doc.getCurrentPageInfo()
             .pageNumber
-        : doc.getNumberOfPages();
+        : ((doc as any).getNumberOfPages?.() ?? 1);
 
     doc.text(
       `Page ${pageNumber}`,

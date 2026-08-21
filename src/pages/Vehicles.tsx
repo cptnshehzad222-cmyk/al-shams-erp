@@ -2529,7 +2529,7 @@ function Vehicles() {
     doc: jsPDF
   ) {
     const totalPages =
-      doc.getNumberOfPages();
+      (doc as any).getNumberOfPages?.();
 
     for (
       let page = 1;

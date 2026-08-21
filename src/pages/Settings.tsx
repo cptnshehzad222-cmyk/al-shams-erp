@@ -472,7 +472,6 @@ function Settings() {
     } as React.CSSProperties,
 
     button: (color: string) => ({
-      border: "none",
       borderRadius: "6px",
       padding: "8px 18px",
       background: `linear-gradient(135deg, rgba(${color},0.2), rgba(${color},0.1))`,
@@ -485,7 +484,6 @@ function Settings() {
     }),
 
     buttonPrimary: {
-      border: "none",
       borderRadius: "6px",
       padding: "9px 20px",
       background: "linear-gradient(135deg, rgba(6,182,212,0.2), rgba(37,99,235,0.2))",
@@ -498,7 +496,6 @@ function Settings() {
     } as React.CSSProperties,
 
     buttonDanger: {
-      border: "none",
       borderRadius: "6px",
       padding: "6px 12px",
       background: "rgba(239,68,68,0.1)",
@@ -511,7 +508,6 @@ function Settings() {
     } as React.CSSProperties,
 
     buttonSuccess: {
-      border: "none",
       borderRadius: "6px",
       padding: "6px 12px",
       background: "rgba(34,197,94,0.1)",

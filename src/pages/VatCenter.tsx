@@ -1719,7 +1719,7 @@ export default function VatCenter() {
             8: { cellWidth: 20 },
           },
           didDrawPage: (data) => {
-            const pageCount = doc.internal.getNumberOfPages();
+            const pageCount = (doc as any).internal?.getNumberOfPages?.() ?? 1;
             for (let i = 1; i <= pageCount; i++) {
               doc.setPage(i);
               doc.setDrawColor(200, 210, 220);

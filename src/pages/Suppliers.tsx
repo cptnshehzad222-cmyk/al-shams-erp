@@ -1808,7 +1808,7 @@ function Suppliers() {
       );
 
       const totalPages =
-        doc.getNumberOfPages();
+        (doc as any).getNumberOfPages?.();
 
       for (
         let page = 1;
@@ -2317,7 +2317,6 @@ function Suppliers() {
   };
 
   const addSupplierButtonStyle: CSSProperties = {
-    border: "none",
     borderRadius: "8px",
     padding: "10px 18px",
     background: "linear-gradient(135deg, rgba(6,182,212,0.2), rgba(37,99,235,0.2))",
@@ -2451,7 +2450,6 @@ function Suppliers() {
 
   const viewSupplierButtonStyle: CSSProperties = {
     flex: 1,
-    border: "none",
     borderRadius: "5px",
     padding: "7px",
     background: "linear-gradient(135deg, rgba(6,182,212,0.2), rgba(37,99,235,0.2))",
@@ -2535,7 +2533,6 @@ function Suppliers() {
   };
 
   const pdfButtonStyle: CSSProperties = {
-    border: "none",
     borderRadius: "7px",
     padding: "9px 16px",
     background: "linear-gradient(135deg, rgba(239,68,68,0.2), rgba(185,28,28,0.2))",
@@ -2547,7 +2544,6 @@ function Suppliers() {
   };
 
   const excelButtonStyle: CSSProperties = {
-    border: "none",
     borderRadius: "7px",
     padding: "9px 16px",
     background: "linear-gradient(135deg, rgba(34,197,94,0.2), rgba(21,128,61,0.2))",
@@ -2808,7 +2804,6 @@ function Suppliers() {
   };
 
   const modalSaveButtonStyle: CSSProperties = {
-    border: "none",
     borderRadius: "7px",
     padding: "9px 18px",
     background: "linear-gradient(135deg, rgba(6,182,212,0.2), rgba(37,99,235,0.2))",
